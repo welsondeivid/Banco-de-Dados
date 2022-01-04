@@ -1,60 +1,138 @@
 #include <stdio.h>
 
-void Dirac (int num_adj[], int vertice, int cont)
+/*Vvertice	Avertice, vertice-1		Pvertice, vertice-1
+1	2 3 4 6 0	5 4 2 6 0
+2	1 5 4 0 0	5 1 7 0 0
+3	1 5 0 0 0	4 6 0 0 0
+4	1 2 6 0 0	2 1 1 0 0
+5	2 3 0 0 0	7 6 0 0 0
+6	1 4 0 0 0	6 1 0 0 0*/
+
+// a linha 0 contém na matriz de arestas os números ligados ao 1, e na matriz de pesos o peso referente a cada aresta
+// aresta[i][j] -> peso[i][j]
+
+void Dirac (int graus[], int vert, int cont)
 {
-    if (cont == vertice)
+    if (cont == vert)
     {
         printf ("Grafo Hamiltoniano");
         return;
     }
     
-    if (num_adj[cont] < vertice/2)
+    if (graus[cont] < vert/2)
     {
         printf ("Grafo não-Hamiltoniano");
         return;
     }
     else
     {
-        Dirac (num_adj, vertice, cont+1);
+        Dirac (graus, vert, cont+1);
     }
+}
+
+void ler_string(char linha[], int qVertices, int arestas[][qVertices - 1], int pesos[][qVertices - 1], int graus[], int cont_arestas[], int qArestas, int cont)
+{
+    char vert, ares, peso;
+    int x, y, p;
+    if (cont < qArestas)
+    {
+        scanf ("%c %c", &vert, &ares);  // sempre vai ter os dois primeiros números
+        scanf ("%c", &peso);
+        
+        if (peso == ' ')  // se o escaneado foi um espaço tem mais 1 número
+        {
+            scanf("%c", &peso);
+            getchar();
+        }
+        else
+        {
+            peso = '1';  // peso se não tiver mostrando
+        }
+        
+        //Transformando em inteiros
+        x = (int)vert - 48;
+        y = (int)ares - 48;
+        p = (int)peso - 48;
+
+        arestas[x-1][cont_arestas[x-1]] = y;   // x é vertice, y é aresta
+        arestas[y-1][cont_arestas[y-1]] = x;
+
+        pesos[x-1][cont_arestas[x-1]] = p; //linha referente à mesma linha da matriz arestas
+        pesos[y-1][cont_arestas[y-1]] = p; //coluna referente à mesma coluna da matriz arestas
+        
+        graus[x-1] += 1;
+        graus[y-1] += 1;
+        
+        cont_arestas[y-1] += 1;
+        cont_arestas[x-1] += 1;
+        
+        ler_string (linha, qVertices, arestas, pesos, graus, cont_arestas, qArestas, cont+1);
+    }
+    return;
 }
 
 int main()
 {
-    int vertice, aresta, n = 1, x, y;
-    scanf ("%d %d", &vertice, &aresta);
-    int num_adj[vertice], adj[vertice][aresta];
+    int vert, ares, n = 1, x, y, vert_anterior = 1;
+    scanf ("%d %d\n", &vert, &ares);
+    int vertices[vert], graus[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1];
     
-    //preencher num_adj com 0's
-    for (int i = 0; i < vertice; i++)
+    // preencher arestas e pesos com 0's
+    for (int i = 0; i < vert; i++)
     {
-        num_adj[i] = 0;
+        for (int j = 0; j < vert - 1; j++)
+        {
+            arestas[i][j] = 0;
+            pesos[i][j] = 0;
+        }
     }
-    
-    //preencher coluna
-    for (int i = 0; i < vertice; i++)
+
+    //preencher graus com 0's
+    for (int i = 0; i < vert; i++)
     {
-        adj[i][0] = n;
+        graus[i] = 0;
+        cont_arestas[i] = 0;
+    }
+
+    char linha[3];
+    ler_string (linha, vert, arestas, pesos, graus, cont_arestas, ares, 0);
+    
+    //preencher vetor vertices
+    for (int i = 0; i < vert; i++)
+    {
+        vertices[i] = n;
         n++;
-        //printf ("%d\n", adj[i][0]);
+        //printf ("%d\n", vertices[i][0]);
     }
-    
-    //preencher num_adj com os graus de cada vértice
-    for (int i = 0; i < aresta; i++)
+
+    // printar arestas
+    /*for (int i = 0; i < vert; i++)
     {
-        scanf ("%d %d\n", &x, &y);
-        //printf ("%d %d\n", x, y);
-        num_adj[x-1] += 1;
-        num_adj[y-1] += 1;
-        
+        for (int j = 0; j < vert - 1; j++)
+        {
+            printf("%i ", arestas[i][j]);
+        }
+        printf ("\n");
     }
+    printf ("\n");*/
     
-    //print
-    for (int i = 0; i < vertice; i++)
+    // printar pesos
+    /*for (int i = 0; i < vert; i++)
     {
-        //printf ("%d ", num_adj[i]);
+        for (int j = 0; j < vert - 1; j++)
+        {
+            printf("%i ", pesos[i][j]);
+        }
+        printf ("\n");
     }
+    printf ("\n");*/
     
-    Dirac (num_adj, vertice, 0);
+    //printar graus
+    /*for (int i = 0; i < vert; i++)
+    {
+        printf ("%d ", graus[i]);
+    }*/
+    
+    Dirac (graus, vert, 0);
     return 0;
 }
