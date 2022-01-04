@@ -32,39 +32,34 @@ void Dirac (int graus[], int vert, int cont)
 
 void ler_string(char linha[], int qVertices, int arestas[][qVertices - 1], int pesos[][qVertices - 1], int graus[], int cont_arestas[], int qArestas, int cont)
 {
-    char vert, ares, peso;
-    int x, y, p;
+    int vert, ares, peso;
+    char c;
+    
     if (cont < qArestas)
     {
-        scanf ("%c %c", &vert, &ares);  // sempre vai ter os dois primeiros números
-        scanf ("%c", &peso);
+        scanf ("%d %d", &vert, &ares);  // sempre vai ter os dois primeiros números
+        scanf ("%c", &c);
         
-        if (peso == ' ')  // se o escaneado foi um espaço tem mais 1 número
+        if (c == ' ')  // se o escaneado foi um espaço tem mais 1 número
         {
-            scanf("%c", &peso);
-            getchar();
+            scanf("%d", &peso);
         }
         else
         {
-            peso = '1';  // peso se não tiver mostrando
+            peso = 1;  // peso se não tiver mostrando
         }
-        
-        //Transformando em inteiros
-        x = (int)vert - 48;
-        y = (int)ares - 48;
-        p = (int)peso - 48;
 
-        arestas[x-1][cont_arestas[x-1]] = y;   // x é vertice, y é aresta
-        arestas[y-1][cont_arestas[y-1]] = x;
+        arestas[vert-1][cont_arestas[vert-1]] = ares;
+        arestas[ares-1][cont_arestas[ares-1]] = vert;
 
-        pesos[x-1][cont_arestas[x-1]] = p; //linha referente à mesma linha da matriz arestas
-        pesos[y-1][cont_arestas[y-1]] = p; //coluna referente à mesma coluna da matriz arestas
+        pesos[vert-1][cont_arestas[vert-1]] = peso; //linha referente à mesma linha da matriz arestas
+        pesos[ares-1][cont_arestas[ares-1]] = peso; //coluna referente à mesma coluna da matriz arestas
         
-        graus[x-1] += 1;
-        graus[y-1] += 1;
+        graus[vert-1] += 1;
+        graus[ares-1] += 1;
         
-        cont_arestas[y-1] += 1;
-        cont_arestas[x-1] += 1;
+        cont_arestas[ares-1] += 1;
+        cont_arestas[vert-1] += 1;
         
         ler_string (linha, qVertices, arestas, pesos, graus, cont_arestas, qArestas, cont+1);
     }
