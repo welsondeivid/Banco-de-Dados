@@ -94,45 +94,80 @@ void adicionarVetor(int percorridos[], int num, int contador)
     }
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int pTotal, int final)
+void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int pTotal, int final, int cont)
 {
     int cheio, adjVist, atualVist;
     
     cheio = total(percorridos, 0, qVertices);
     atualVist = procurar(percorridos, atual, 0, qVertices);
     
-    //printf("%i", cheio);
-    printf("%i %i\n", atual, atualVist);
+    printf("%d %d\n", atual, atualVist);
+    //printf("*%d*\n", cont);
     
-    adicionarVetor(percorridos, atual, 0);
-    
-    if (atual == 4)
+    if (atual == final)
     {
-        printf("(%i)\n", pTotal);
+        printf("(%d)\n", pTotal); // Custo total
+        
+        /*if (*mcusto == 0 || *mcusto > pTotal)
+        {
+            *mcusto = pTotal;
+        }*/
+        
+        //Caminho da vitória
+        /*printf ("vetor:");
+        for (int i = 0; i < 6; i++)
+        {
+            printf ("%d ", percorridos[i]);
+        }
+        printf ("\n");*/
+        
+        return;
     }
     
-    if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorno
+    if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorna
     {
         return;
     }
     else
     {
+        adicionarVetor(percorridos, atual, 0);
+        
+        
         for (int i = 0; i < qVertices-1; i++)
         {
-            adjVist = procurar(percorridos, arestas[atual-1][i], 0, qVertices);
+            //adjVist = procurar(percorridos, arestas[atual-1][i], 0, qVertices);
             //printf("%i\n", adjVist);
-            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final);
+            
+            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1);
+            
             /*if (adjVist == 0)
             {
                 caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final);
             }*/
         }
+        //Print lindjo
+        /*for (int i = 0; i < 6; i++)
+        {
+            printf ("%d ", percorridos[i]);
+        }
+        printf ("\n");*/
+            
+        percorridos[cont] = 0; //Zerando vetor se passou por todas as adjacências
+        
+        /*for (int i = 0; i < 6; i++)
+        {
+            printf ("%d ", percorridos[i]);
+        }            
+        printf ("\n");*/
+        printf ("SAIU\n");
     }
 }
 
 int main()
 {
-    int vert, ares, n = 1, x, y, vert_anterior = 1;
+    int vert, ares, n = 1, x, y;
+    int *mcusto;
+    //*mcusto = 0;
     scanf ("%d %d\n", &vert, &ares);
     int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1];
     
@@ -156,7 +191,9 @@ int main()
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
 
-    caminho(vert, arestas, pesos, percorridos, 1, 0, 5);
+    caminho(vert, arestas, pesos, percorridos, 2, 0, 6, 0);
+    
+    //printf ("Menor custo = %d", *mcusto);
     
     //preencher vetor vertices
     for (int i = 0; i < vert; i++)
