@@ -94,7 +94,7 @@ void adicionarVetor(int percorridos[], int num, int contador)
     }
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int pTotal, int final, int cont)
+void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int mcaminho[], int atual, int pTotal, int final, int cont, int *mcusto)
 {
     int cheio, adjVist, atualVist;
     
@@ -108,10 +108,15 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
     {
         printf("(%d)\n", pTotal); // Custo total
         
-        /*if (*mcusto == 0 || *mcusto > pTotal)
+        if (*mcusto == 0 || *mcusto > pTotal)
         {
             *mcusto = pTotal;
-        }*/
+            
+            for (int i = 0; i < qVertices; i++)
+            {
+                mcaminho[i] = percorridos[i];
+            }
+        }
         
         //Caminho da vitória
         /*printf ("vetor:");
@@ -138,7 +143,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
             //adjVist = procurar(percorridos, arestas[atual-1][i], 0, qVertices);
             //printf("%i\n", adjVist);
             
-            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1);
+            caminho(qVertices, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, mcusto);
             
             /*if (adjVist == 0)
             {
@@ -165,35 +170,50 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
 
 int main()
 {
-    int vert, ares, n = 1, x, y;
-    int *mcusto;
-    //*mcusto = 0;
-    scanf ("%d %d\n", &vert, &ares);
-    int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1];
+    int vert, ares, n = 1, x, y, inicio, fim;
+    int mcusto = 0;
     
-    // preencher arestas e pesos com 0's
+    scanf ("%d %d\n", &vert, &ares);
+    int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], mcaminho[vert];
+    
+    // preencher todos os vetores com 0's
     for (int i = 0; i < vert; i++)
     {
+        graus[i] = 0;
+        cont_arestas[i] = 0;
+        percorridos[i] = 0;
+        mcaminho[i] = 0;
+        
         for (int j = 0; j < vert - 1; j++)
         {
             arestas[i][j] = 0;
             pesos[i][j] = 0;
         }
     }
-
-    //preencher graus com 0's
-    for (int i = 0; i < vert; i++)
-    {
-        graus[i] = 0;
-        cont_arestas[i] = 0;
-        percorridos[i] = 0;
-    }
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
-
-    caminho(vert, arestas, pesos, percorridos, 2, 0, 6, 0);
     
-    //printf ("Menor custo = %d", *mcusto);
+    scanf ("%d %d", &inicio, &fim);
+    
+    if (inicio > vert || inicio < 0)
+    {
+        printf ("Erro 404: Vertice inicial nao pertence ao grafo");
+        return 0;
+    }
+    
+    caminho(vert, arestas, pesos, percorridos, mcaminho, inicio, 0, fim, 0, &mcusto);
+    
+    if (mcusto == 0)
+    {
+        printf ("\nDistancia infinita ou vertice(s) nao pertence(m) ao grafo");
+        return 0;
+    }
+    
+    printf ("\nMenor custo = %d\nMenor caminho: ", mcusto);
+    for (int i = 0; i < vert; i++)
+    {
+        if (mcaminho[i] != 0) printf ("%d ", mcaminho[i]);
+    }
     
     //preencher vetor vertices
     for (int i = 0; i < vert; i++)
