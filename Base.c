@@ -214,6 +214,7 @@ int main()
     {
         if (mcaminho[i] != 0) printf ("%d ", mcaminho[i]);
     }
+    printf ("%d\n", fim);
     
     //preencher vetor vertices
     for (int i = 0; i < vert; i++)
