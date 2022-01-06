@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 /*Vvertice	Avertice, vertice-1		Pvertice, vertice-1
-1	2 3 4 6 0	5 4 2 6 0
-2	1 5 4 0 0	5 1 7 0 0
-3	1 5 0 0 0	4 6 0 0 0
-4	1 2 6 0 0	2 1 1 0 0
-5	2 3 0 0 0	7 6 0 0 0
-6	1 4 0 0 0	6 1 0 0 0*/
+1	        2 3 4 6 0	            5 4 2 6 0
+2	        1 5 4 0 0	            5 1 7 0 0
+3	        1 5 0 0 0	            4 6 0 0 0
+4	        1 2 6 0 0	            2 1 1 0 0
+5	        2 3 0 0 0	            7 6 0 0 0
+6	        1 4 0 0 0	            6 1 0 0 0*/
 
 // a linha 0 contém na matriz de arestas os números ligados ao 1, e na matriz de pesos o peso referente a cada aresta
 // aresta[i][j] -> peso[i][j]
@@ -94,23 +94,23 @@ void adicionarVetor(int percorridos[], int num, int contador)
     }
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int mcaminho[], int atual, int pTotal, int final, int cont, int *mcusto)
+void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int mcaminho[], int atual, int pTotal, int final, int cont, int *ccusto)
 {
     int cheio, adjVist, atualVist;
     
     cheio = total(percorridos, 0, qVertices);
+    
     atualVist = procurar(percorridos, atual, 0, qVertices);
     
-    printf("%d %d\n", atual, atualVist);
+    //printf("%d %d\n", atual, atualVist);
     //printf("*%d*\n", cont);
     
-    if (atual == final)
+    if (cheio == 1 && atual == final)
     {
-        printf("(%d)\n", pTotal); // Custo total
         
-        if (*mcusto == 0 || *mcusto > pTotal)
+        if (*ccusto == 0 || *ccusto > pTotal)
         {
-            *mcusto = pTotal;
+            *ccusto = pTotal;
             
             for (int i = 0; i < qVertices; i++)
             {
@@ -118,15 +118,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
             }
         }
         
-        //Caminho da vitória
-        /*printf ("vetor:");
-        for (int i = 0; i < 6; i++)
-        {
-            printf ("%d ", percorridos[i]);
-        }
-        printf ("\n");*/
-        
-        return;
+        return ;
     }
     
     if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorna
@@ -143,7 +135,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
             //adjVist = procurar(percorridos, arestas[atual-1][i], 0, qVertices);
             //printf("%i\n", adjVist);
             
-            caminho(qVertices, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, mcusto);
+            caminho(qVertices, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, ccusto);
             
             /*if (adjVist == 0)
             {
@@ -151,7 +143,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
             }*/
         }
         //Print lindjo
-        /*for (int i = 0; i < 6; i++)
+        /*for (int i = 0; i < qVertices; i++)
         {
             printf ("%d ", percorridos[i]);
         }
@@ -159,19 +151,53 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
             
         percorridos[cont] = 0; //Zerando vetor se passou por todas as adjacências
         
-        /*for (int i = 0; i < 6; i++)
+        /*for (int i = 0; i < qVertices; i++)
         {
             printf ("%d ", percorridos[i]);
         }            
         printf ("\n");*/
-        printf ("SAIU\n");
+        //printf ("SAIU\n");
+    }
+}
+
+int Euler (int graus[], int cont, int tam)
+{
+    if (cont == tam)
+    {
+        return 1;
+    }
+    else
+    {
+        if (graus[cont] % 2 != 0)
+        {
+            return 0;
+        }
+        
+        return Euler (graus, cont+1, tam);
+    }
+}
+
+int Dirac (int graus[], int cont, int tam)
+{
+    if (cont == tam)
+    {
+        return 1;
+    }
+    else
+    {
+        if ((float)graus[cont] < (tam/2.0))
+        {
+            return 0;
+        }
+        
+        return Dirac (graus, cont+1, tam);
     }
 }
 
 int main()
 {
     int vert, ares, n = 1, x, y, inicio, fim;
-    int mcusto = 0;
+    int ccusto = 0;
     
     scanf ("%d %d\n", &vert, &ares);
     int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], mcaminho[vert];
@@ -201,20 +227,38 @@ int main()
         return 0;
     }
     
-    caminho(vert, arestas, pesos, percorridos, mcaminho, inicio, 0, fim, 0, &mcusto);
+    int D = Dirac (graus, 0, vert);
     
-    if (mcusto == 0)
+    caminho(vert, arestas, pesos, percorridos, mcaminho, inicio, 0, fim, 0, &ccusto);
+    
+    int euleriano = Euler(graus, 0, vert);
+    
+    if (euleriano == 1) printf ("Grafo Euleriano\n\n");
+    
+    else    printf ("Grafo nao Euleriano\n\n");
+    
+    if (D == 1) // Se o teorema funcionar, já sabemos que hamiltoniano
     {
-        printf ("\nDistancia infinita ou vertice(s) nao pertence(m) ao grafo");
+        printf ("Grafo Hamiltoniano\n");
         return 0;
     }
     
-    printf ("\nMenor custo = %d\nMenor caminho: ", mcusto);
-    for (int i = 0; i < vert; i++)
+    //Se o teorema falhar, ainda checamos já que o teorema não é sse
+    if (ccusto != 0)
     {
-        if (mcaminho[i] != 0) printf ("%d ", mcaminho[i]);
+        printf ("Grafo Hamiltoniano\n");
+        printf ("Custo %d\nExemplo de ciclo ", ccusto);
+        
+        for (int i = 0; i < vert; i++)
+        {
+            printf ("%d ", mcaminho[i]);
+        }
+        printf ("%d\n", fim);
     }
-    printf ("%d", fim);
+    else
+    {
+        printf ("Grafo nao Hamiltoniano\n");
+    }
     
     //preencher vetor vertices
     for (int i = 0; i < vert; i++)
