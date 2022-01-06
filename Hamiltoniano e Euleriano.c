@@ -196,11 +196,11 @@ int Dirac (int graus[], int cont, int tam)
 
 int main()
 {
-    int vert, ares, n = 1, x, y, inicio, fim;
+    int vert, ares, n = 1, x, y;
     int ccusto = 0;
     
     scanf ("%d %d\n", &vert, &ares);
-    int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], mcaminho[vert];
+    int graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], mcaminho[vert];
     
     // preencher todos os vetores com 0's
     for (int i = 0; i < vert; i++)
@@ -219,17 +219,9 @@ int main()
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
     
-    scanf ("%d %d", &inicio, &fim);
-    
-    if (inicio > vert || inicio < 0)
-    {
-        printf ("Erro 404: Vertice inicial nao pertence ao grafo");
-        return 0;
-    }
-    
     int D = Dirac (graus, 0, vert);
     
-    caminho(vert, arestas, pesos, percorridos, mcaminho, inicio, 0, fim, 0, &ccusto);
+    caminho(vert, arestas, pesos, percorridos, mcaminho, 1, 0, 1, 0, &ccusto);
     
     int euleriano = Euler(graus, 0, vert);
     
@@ -239,62 +231,26 @@ int main()
     
     if (D == 1) // Se o teorema funcionar, já sabemos que hamiltoniano
     {
-        printf ("Grafo Hamiltoniano\n");
+        printf ("Grafo Hamiltoniano (pelo teorema de Dirac)\n");
         return 0;
     }
     
     //Se o teorema falhar, ainda checamos já que o teorema não é sse
     if (ccusto != 0)
     {
-        printf ("Grafo Hamiltoniano\n");
-        printf ("Custo %d\nExemplo de ciclo ", ccusto);
+        printf ("Grafo Hamiltoniano (achando ciclo hamiltoniano)\n");
+        printf ("Exemplo de ciclo: ");
         
         for (int i = 0; i < vert; i++)
         {
             printf ("%d ", mcaminho[i]);
         }
-        printf ("%d\n", fim);
+        printf ("1\nCusto: %d\n", ccusto);
     }
     else
     {
         printf ("Grafo nao Hamiltoniano\n");
     }
-    
-    //preencher vetor vertices
-    for (int i = 0; i < vert; i++)
-    {
-        vertices[i] = n;
-        n++;
-        //printf ("%d\n", vertices[i][0]);
-    }
-
-    // printar arestas
-    /*for (int i = 0; i < vert; i++)
-    {
-        for (int j = 0; j < vert - 1; j++)
-        {
-            printf("%i ", arestas[i][j]);
-        }
-        printf ("\n");
-    }
-    printf ("\n");*/
-    
-    // printar pesos
-    /*for (int i = 0; i < vert; i++)
-    {
-        for (int j = 0; j < vert - 1; j++)
-        {
-            printf("%i ", pesos[i][j]);
-        }
-        printf ("\n");
-    }
-    printf ("\n");*/
-    
-    //printar graus
-    /*for (int i = 0; i < vert; i++)
-    {
-        printf ("%d ", graus[i]);
-    }*/
     
     return 0;
 }
