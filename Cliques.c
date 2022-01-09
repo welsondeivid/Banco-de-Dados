@@ -47,6 +47,37 @@ void ler_string(int qVertices, int arestas[][qVertices - 1], int pesos[][qVertic
     return;
 }
 
+int Clique (int tam, int arestas[][tam-1], int percorridos[], int cont, int qElementos)
+{
+    int x = 0;
+    
+    for (int i = 0; i < qElementos; i++)
+    {
+        for (int j = 0; j < qElementos; j++)
+        {
+            if (percorridos[i] != percorridos[j])
+            {
+                for (int k = 0; k < tam-1; k++)
+                {
+                    if (arestas[percorridos[i]-1][k] == percorridos[j])
+                    {
+                        x = 1;
+                        break;
+                    }
+                }
+                
+                if (x == 0)
+                {
+                    return 0;
+                }
+                x = 0;
+            }
+        }
+    }
+    
+    return qElementos;
+}
+
 int total(int percorridos[], int contador, int tamanho)
 {
     if (contador == tamanho)
@@ -94,9 +125,9 @@ void adicionarVetor(int percorridos[], int num, int contador)
     }
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int mcaminho[], int atual, int pTotal, int final, int cont, int *ccusto)
+void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int Maxclique[], int atual, int pTotal, int final, int cont, int *cmax)
 {
-    int cheio, adjVist, atualVist;
+    int cheio, atualVist;
     
     cheio = total(percorridos, 0, qVertices);
     
@@ -105,23 +136,35 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
     //printf("%d %d\n", atual, atualVist);
     //printf("*%d*\n", cont);
     
-    if (cheio == 1 && atual == final)
+    if (atual == final && cont != 0)
     {
-        
-        if (*ccusto == 0 || *ccusto > pTotal)
+        int tamanho = 0;
+        for (int i = 0; i < qVertices; i++)
         {
-            *ccusto = pTotal;
-            
-            for (int i = 0; i < qVertices; i++)
+            if (percorridos[i] != 0)
             {
-                mcaminho[i] = percorridos[i];
+                tamanho++;
             }
+            //printf ("%d ", percorridos[i]);
         }
-        
-        return ;
+        if (tamanho > 2)
+        {
+            int Mclique = Clique (qVertices, arestas, percorridos, 0, tamanho);
+            
+            if (Mclique > *cmax)
+            {
+                for (int i = 0; i < qVertices; i++)
+                {
+                    Maxclique[i] = percorridos[i];
+                }
+                *cmax = Mclique;
+            }
+            //printf ("\n%d", *cmax);
+        }
+        //printf ("\n");
     }
     
-    if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorna
+    else if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorna
     {
         return;
     }
@@ -129,18 +172,9 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
     {
         adicionarVetor(percorridos, atual, 0);
         
-        
         for (int i = 0; i < qVertices-1; i++)
         {
-            //adjVist = procurar(percorridos, arestas[atual-1][i], 0, qVertices);
-            //printf("%i\n", adjVist);
-            
-            caminho(qVertices, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, ccusto);
-            
-            /*if (adjVist == 0)
-            {
-                caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final);
-            }*/
+            caminho(qVertices, arestas, pesos, percorridos, Maxclique, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, cmax);
         }
         //Print lindjo
         /*for (int i = 0; i < qVertices; i++)
@@ -163,10 +197,10 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
 int main()
 {
     int vert, ares, n = 1, x, y;
-    int ccusto = 0;
+    int cmax = 0;
     
     scanf ("%d %d\n", &vert, &ares);
-    int graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], mcaminho[vert];
+    int graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], Maxclique[vert];
     
     // preencher todos os vetores com 0's
     for (int i = 0; i < vert; i++)
@@ -174,7 +208,6 @@ int main()
         graus[i] = 0;
         cont_arestas[i] = 0;
         percorridos[i] = 0;
-        mcaminho[i] = 0;
         
         for (int j = 0; j < vert - 1; j++)
         {
@@ -185,7 +218,14 @@ int main()
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
     
-    caminho(vert, arestas, pesos, percorridos, mcaminho, 1, 0, 1, 0, &ccusto);
+    caminho(vert, arestas, pesos, percorridos, Maxclique, 1, 0, 1, 0, &cmax);
+    
+    printf ("Tamanho da Clique Maxima: %d\nClique: ", cmax);
+    
+    for (int i = 0; i < vert; i-=-1)
+    {
+        if (Maxclique[i] != 0)  printf ("%d ", Maxclique[i]);
+    }
     
     return 0;
 }
