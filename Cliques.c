@@ -51,14 +51,18 @@ int Clique (int tam, int arestas[][tam-1], int percorridos[], int cont, int qEle
 {
     int x = 0;
     
+    // cada elemento vai verificar se tem ligação com todos os outros
     for (int i = 0; i < qElementos; i++)
     {
         for (int j = 0; j < qElementos; j++)
         {
+            // se forem iguais ex.: 1 e 1, eu não verifico pq nao é multigrafo krai
             if (percorridos[i] != percorridos[j])
             {
+                // para cada aresta
                 for (int k = 0; k < tam-1; k++)
                 {
+                    // verificar se fazem aresta, se sim eu posso ir pro prox num
                     if (arestas[percorridos[i]-1][k] == percorridos[j])
                     {
                         x = 1;
@@ -66,16 +70,67 @@ int Clique (int tam, int arestas[][tam-1], int percorridos[], int cont, int qEle
                     }
                 }
                 
-                if (x == 0)
+                if (x == 0) // não forma aresta e posso vazar, não é uma clique
                 {
                     return 0;
                 }
+                // reiniciar para cada vertice que verifica
                 x = 0;
             }
         }
     }
     
     return qElementos;
+}
+
+void adicionarVetor(int percorridos[], int num, int contador)
+{
+    if (percorridos[contador] == 0)
+    {
+        percorridos[contador] = num;
+    }
+    else
+    {
+        adicionarVetor(percorridos, num, contador + 1);
+    }
+}
+
+void removerVetor(int vetor[], int num, int cont)
+{
+    if (num == vetor[cont])
+    {
+        vetor[cont] = 0;
+        return;
+    }
+    else
+    {
+        removerVetor(vetor, num, cont+1);
+    }
+}
+
+int comp(int qVertices, int arestas[][qVertices-1], int complementar[][qVertices-1], int n_vistos[])
+{
+    int qtd;
+    for (int i = 0; i < qVertices; i++)
+    {
+        qtd = 0;
+        removerVetor(n_vistos, i+1, 0);
+        for (int j = 0; j < qVertices-1; j++)
+        {
+            removerVetor(n_vistos, arestas[i][j], 0);
+        }
+        
+        for (int k = 0; k < qVertices; k++)
+        {
+            if (n_vistos[k] != 0)
+            {
+                complementar[i][qtd] = n_vistos[k];
+                qtd++;
+            }
+            n_vistos[k] = k+1;
+            //printf("%i ", n_vistos[k]);
+        }
+    }
 }
 
 int total(int percorridos[], int contador, int tamanho)
@@ -110,18 +165,6 @@ int procurar(int percorridos[], int num, int contador, int tamanho)
         {
             return procurar(percorridos, num, contador + 1, tamanho);
         }
-    }
-}
-
-void adicionarVetor(int percorridos[], int num, int contador)
-{
-    if (percorridos[contador] == 0)
-    {
-        percorridos[contador] = num;
-    }
-    else
-    {
-        adicionarVetor(percorridos, num, contador + 1);
     }
 }
 
@@ -196,11 +239,13 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
 
 int main()
 {
-    int vert, ares, n = 1, x, y;
+    int vert, ares, x;
     int cmax = 0;
     
     scanf ("%d %d\n", &vert, &ares);
-    int graus[vert], percorridos[vert], cont_arestas[vert], arestas[vert][vert-1], pesos[vert][vert-1], Maxclique[vert];
+    
+    int graus[vert], percorridos[vert], n_vistos[vert], Maxclique[vert], cont_arestas[vert];
+    int complementar[vert][vert-1], arestas[vert][vert-1], pesos[vert][vert-1];
     
     // preencher todos os vetores com 0's
     for (int i = 0; i < vert; i++)
@@ -208,21 +253,76 @@ int main()
         graus[i] = 0;
         cont_arestas[i] = 0;
         percorridos[i] = 0;
+        Maxclique[i] = 0;
+        n_vistos[i] = i+1;
         
         for (int j = 0; j < vert - 1; j++)
         {
             arestas[i][j] = 0;
             pesos[i][j] = 0;
+            complementar[i][j] = 0;
         }
     }
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
     
-    caminho(vert, arestas, pesos, percorridos, Maxclique, 1, 0, 1, 0, &cmax);
+    for (int i = 1; i < vert; i++)
+    {
+        caminho(vert, arestas, pesos, percorridos, Maxclique, i, 0, i, 0, &cmax);  
+    }
+    
+    // na clique maxima precisa colocar verificando todas as arestas 2 2, 3 3 etc.. colocar num for (num vert)
+
+    if (cmax == 0)
+    {
+        for (int i = 0; i < vert; i++)
+        {
+            for (int j = 0; j < vert-1; j++)
+            {
+                if (arestas[i][j] != 0)
+                {
+                    printf ("Tamanho da Clique Maxima: 2\nClique: %i %i", i+1, arestas[i][j]);
+                    return 0;
+                }
+            }
+        }
+    }
     
     printf ("Tamanho da Clique Maxima: %d\nClique: ", cmax);
     
-    for (int i = 0; i < vert; i-=-1)
+    for (int i = 0; i < vert; i++)
+    {
+        if (Maxclique[i] != 0)  printf ("%d ", Maxclique[i]);
+    }
+    
+    // COMPLEMENTAR
+    comp(vert, arestas, complementar, n_vistos);
+    
+    printf("\nComplementar:\n");
+    for (int i = 0; i < vert; i++)
+    {
+        for (int j = 0; j < vert-1; j++)
+        {
+            printf("%i ", complementar[i][j]);
+        }
+        printf("\n");
+    }
+    
+    cmax = 0;
+    for (int i = 1; i < vert; i++)
+    {
+        caminho(vert, complementar, pesos, percorridos, Maxclique, i, 0, i, 0, &cmax);  
+    }
+    
+    // clique maxima do complementar:
+    if (cmax == 0)
+    {
+        printf("Nao possui conjunto independente");
+        return 0;
+    }
+    printf ("Tamanho do conjunto independente maximo: %d\nConjunto: ", cmax);
+    
+    for (int i = 0; i < vert; i++)
     {
         if (Maxclique[i] != 0)  printf ("%d ", Maxclique[i]);
     }
