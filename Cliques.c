@@ -246,7 +246,7 @@ int main()
     
     if (ares == 0)
     {
-        printf ("Grafo Desconexo\nConjunto Independente: ");
+        printf ("Grafo Totalmente Desconexo\nConjunto Independente: ");
         
         for (int i = 0; i < vert; i++)
         {
@@ -277,9 +277,11 @@ int main()
     
     ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
     
-    for (int i = 1; i < vert; i++)
+    // não vai verificar o ultimo vertice, se o ultimo vertice participar de uma clique ele vai identificar em
+    // outro vertice menor que ele
+    for (int i = 1; i <= vert; i++)
     {
-        caminho(vert, arestas, pesos, percorridos, Maxclique, i, 0, i, 0, &cmax);  
+        caminho(vert, arestas, pesos, percorridos, Maxclique, i, 0, i, 0, &cmax);
     }
     
     // na clique maxima precisa colocar verificando todas as arestas 2 2, 3 3 etc.. colocar num for (num vert)
@@ -320,7 +322,7 @@ int main()
     }
     
     cmax = 0;
-    for (int i = 1; i < vert; i++)
+    for (int i = 1; i <= vert; i++)
     {
         caminho(vert, complementar, pesos, percorridos, Maxclique, i, 0, i, 0, &cmax);  
     }
