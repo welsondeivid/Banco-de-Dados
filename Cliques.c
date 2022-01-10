@@ -244,6 +244,17 @@ int main()
     
     scanf ("%d %d\n", &vert, &ares);
     
+    if (ares == 0)
+    {
+        printf ("Grafo Desconexo\nConjunto Independente: ");
+        
+        for (int i = 0; i < vert; i++)
+        {
+            printf ("%d ", i+1);
+        }
+        return 0;
+    }
+    
     int graus[vert], percorridos[vert], n_vistos[vert], Maxclique[vert], cont_arestas[vert];
     int complementar[vert][vert-1], arestas[vert][vert-1], pesos[vert][vert-1];
     
