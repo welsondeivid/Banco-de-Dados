@@ -79,8 +79,8 @@ void caminho(int qVert, int arestas[][qVert-1], int pesos[][qVert-1], int percor
 {
     int cheio, atualVist;
     
-    cheio = Vet_Cheio(percorridos, 0, qVert);
-    atualVist = procurar(percorridos, atual, 0, qVert);
+    cheio = Vet_Cheio(percorridos, 0, qVert); //Verifica se já passamos por todos os vértices
+    atualVist = procurar(percorridos, atual, 0, qVert); //Verifica se já passamos pelo vértice atual
     
     if (cheio == 1 && atual == final)
     {
@@ -103,6 +103,7 @@ void caminho(int qVert, int arestas[][qVert-1], int pesos[][qVert-1], int percor
     {
         adicionarVetor(percorridos, atual, 0);
         
+        //Percorre as adjacências
         for (int i = 0; i < qVert-1; i++)
         {
             caminho(qVert, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], final, pTotal + pesos[atual-1][i], cont+1, ccusto);
@@ -115,7 +116,7 @@ void caminho(int qVert, int arestas[][qVert-1], int pesos[][qVert-1], int percor
     }
 }
 
-int Euler (int graus[], int cont, int tam)
+int Euler (int graus[], int cont, int tam) //Aplica Lema de Euler
 {
     if (cont == tam)    return 1;
     
@@ -127,7 +128,7 @@ int Euler (int graus[], int cont, int tam)
     }
 }
 
-int Dirac (int graus[], int cont, int tam)
+int Dirac (int graus[], int cont, int tam)// Aplica Teorema de Dirac
 {
     if (cont == tam)    return 1;
     
