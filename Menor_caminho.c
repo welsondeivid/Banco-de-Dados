@@ -74,6 +74,7 @@ void caminho(int qVert, int arestas[][qVert-1], int pesos[][qVert-1], int percor
     cheio = Vet_Cheio(percorridos, 0, qVert); // Verifica se o vetor está cheio, ou seja, passou por todos os vértices
     atualVist = procurar(percorridos, atual, 0, qVert); // Verifica se já visitou o vértice atual
     
+    //Procuramos pelo menor custo e salvamos o caminho correspondente
     if (atual == final)
     {
         if (*mcusto == 0 || *mcusto > pTotal)
@@ -95,6 +96,7 @@ void caminho(int qVert, int arestas[][qVert-1], int pesos[][qVert-1], int percor
     {
         adicionarVetor(percorridos, atual, 0);
         
+        //Anda nas adjacências
         for (int i = 0; i < qVert-1; i++)
         {
             caminho(qVert, arestas, pesos, percorridos, mcaminho, arestas[atual-1][i], final, pTotal + pesos[atual-1][i], cont+1, mcusto);
