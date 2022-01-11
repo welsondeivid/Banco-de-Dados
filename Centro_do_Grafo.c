@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int graus[], int cont_arestas[], int qArest, int cont)
+void Grafo (int qVert, int arestas[][qVert - 1], int cont_arestas[], int qArest, int cont)
 {
-    int vert, ares, peso;
+    int vert, ares;
     char c;
     
     if (cont < qArest)
@@ -10,28 +10,19 @@ void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int gra
         scanf ("%d %d", &vert, &ares);  // sempre vai ter os dois primeiros números
         scanf ("%c", &c); //caractere de teste
         
-        if (c == ' ')  // se o escaneado foi um espaço tem mais 1 número
+        // se o escaneado foi um espaço tem mais 1 número, que eu não preciso ler, pois no centro não usa peso
+        if (c == ' ')
         {
-            scanf("%d", &peso);
-        }
-        else
-        {
-            peso = 1;  // peso se não tiver 3 número na linha de entrada, peso não definido
+            getchar();
         }
 
         arestas[vert-1][cont_arestas[vert-1]] = ares;
         arestas[ares-1][cont_arestas[ares-1]] = vert;
-
-        pesos[vert-1][cont_arestas[vert-1]] = peso; //linha referente à mesma linha da matriz arestas
-        pesos[ares-1][cont_arestas[ares-1]] = peso; //coluna referente à mesma coluna da matriz arestas
-        
-        graus[vert-1] += 1;
-        graus[ares-1] += 1;
         
         cont_arestas[ares-1] += 1;
         cont_arestas[vert-1] += 1;
         
-        Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, cont+1);
+        Grafo (qVert, arestas, cont_arestas, qArest, cont+1);
     }
     return;
 }
@@ -67,7 +58,7 @@ void adicionarVetor(int percorridos[], int num, int contador)
     else    adicionarVetor(percorridos, num, contador + 1);
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int final, int pTotal, int cont, int *mcusto)
+void caminho(int qVertices, int arestas[][qVertices-1], int percorridos[], int atual, int final, int cont, int *mcusto)
 {
     int cheio, atualVist;
     
@@ -93,7 +84,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
         
         for (int i = 0; i < qVertices-1; i++)
         {
-            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], final, pTotal + pesos[atual-1][i], cont+1, mcusto);
+            caminho(qVertices, arestas, percorridos, arestas[atual-1][i], final, cont+1, mcusto);
         }
         percorridos[cont] = 0; //Zerando vetor se passou por todas as adjacências
     }
@@ -104,24 +95,22 @@ int main()
     int qVert, qArest, Mdist = 0, mExc = 0, mcusto = 0;
     
     scanf ("%d %d\n", &qVert, &qArest);
-    int graus[qVert], percorridos[qVert], cont_arestas[qVert], excentricidade[qVert];
-    int arestas[qVert][qVert-1], pesos[qVert][qVert-1];
+    int percorridos[qVert], cont_arestas[qVert], excentricidade[qVert];
+    int arestas[qVert][qVert-1];
     
     // preencher todos os vetores com 0's
     for (int i = 0; i < qVert; i++)
     {
-        graus[i] = 0;
         cont_arestas[i] = 0;
         percorridos[i] = 0;
         
         for (int j = 0; j < qVert-1; j++)
         {
             arestas[i][j] = 0;
-            pesos[i][j] = 0;
         }
     }
     
-    Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, 0);
+    Grafo (qVert, arestas, cont_arestas, qArest, 0);
 
     for (int i = 1; i <= qVert; i++)
     {
@@ -132,7 +121,7 @@ int main()
                 // reset
                 mcusto = 0;
                 
-                caminho(qVert, arestas, pesos, percorridos, i, j, 0, 0, &mcusto);
+                caminho(qVert, arestas, percorridos, i, j, 0, &mcusto);
                 
                 // qual for a adjacente mais longe eu fico guardando
                 if (mcusto > Mdist) Mdist = mcusto;
