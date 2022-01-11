@@ -1,25 +1,14 @@
 #include <stdio.h>
 
-/*Vvertice	Avertice, vertice-1		Pvertice, vertice-1
-1	2 3 4 6 0	5 4 2 6 0
-2	1 5 4 0 0	5 1 7 0 0
-3	1 5 0 0 0	4 6 0 0 0
-4	1 2 6 0 0	2 1 1 0 0
-5	2 3 0 0 0	7 6 0 0 0
-6	1 4 0 0 0	6 1 0 0 0*/
-
-// a linha 0 contém na matriz de arestas os números ligados ao 1, e na matriz de pesos o peso referente a cada aresta
-// aresta[i][j] -> peso[i][j]
-
-void ler_string(int qVertices, int arestas[][qVertices - 1], int pesos[][qVertices - 1], int graus[], int cont_arestas[], int qArestas, int cont)
+void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int graus[], int cont_arestas[], int qArest, int cont)
 {
     int vert, ares, peso;
     char c;
     
-    if (cont < qArestas)
+    if (cont < qArest)
     {
         scanf ("%d %d", &vert, &ares);  // sempre vai ter os dois primeiros números
-        scanf ("%c", &c);
+        scanf ("%c", &c); //caractere de teste
         
         if (c == ' ')  // se o escaneado foi um espaço tem mais 1 número
         {
@@ -27,7 +16,7 @@ void ler_string(int qVertices, int arestas[][qVertices - 1], int pesos[][qVertic
         }
         else
         {
-            peso = 1;  // peso se não tiver mostrando
+            peso = 1;  // peso se não tiver 3 número na linha de entrada, peso não definido
         }
 
         arestas[vert-1][cont_arestas[vert-1]] = ares;
@@ -42,89 +31,69 @@ void ler_string(int qVertices, int arestas[][qVertices - 1], int pesos[][qVertic
         cont_arestas[ares-1] += 1;
         cont_arestas[vert-1] += 1;
         
-        ler_string (qVertices, arestas, pesos, graus, cont_arestas, qArestas, cont+1);
+        Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, cont+1);
     }
     return;
 }
 
-int total(int percorridos[], int contador, int tamanho)
+int Vet_Cheio(int percorridos[], int contador, int tamanho)
 {
-    if (contador == tamanho)
-    {
-        return 1;
-    }
+    if (contador == tamanho)    return 1;
+    
     else
     {
-        if (percorridos[contador] == 0)
-        {
-            return 0;
-        }
-        return total(percorridos, contador + 1, tamanho);
+        if (percorridos[contador] == 0) return 0;
+        
+        else    return Vet_Cheio(percorridos, contador + 1, tamanho);
     }
 }
 
 int procurar(int percorridos[], int num, int contador, int tamanho)
 {
-    if (contador == tamanho)
-    {
-        return 0;
-    }
+    if (contador == tamanho)    return 0;
+    
     else
     {
-        if (num == percorridos[contador])
-        {
-            return 1;
-        }
-        else
-        {
-            return procurar(percorridos, num, contador + 1, tamanho);
-        }
+        if (num == percorridos[contador])   return 1;
+        
+        else    return procurar(percorridos, num, contador + 1, tamanho);
     }
 }
 
 void adicionarVetor(int percorridos[], int num, int contador)
 {
-    if (percorridos[contador] == 0)
-    {
-        percorridos[contador] = num;
-    }
-    else
-    {
-        adicionarVetor(percorridos, num, contador + 1);
-    }
+    if (percorridos[contador] == 0) percorridos[contador] = num;
+    
+    else    adicionarVetor(percorridos, num, contador + 1);
 }
 
-void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int pTotal, int final, int cont, int *mcusto)
+void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1], int percorridos[], int atual, int final, int pTotal, int cont, int *mcusto)
 {
-    int cheio, adjVist, atualVist;
+    int cheio, atualVist;
     
-    cheio = total(percorridos, 0, qVertices);
+    cheio = Vet_Cheio(percorridos, 0, qVertices);
     atualVist = procurar(percorridos, atual, 0, qVertices);
-    
-    //printf("%d %d\n", atual, atualVist);
-    //printf("*%d*\n", cont);
     
     if (atual == final)
     {
-        if (*mcusto == 0 || *mcusto > pTotal)
+        // cont diz a quantidade de vertices (a excentricidade é o dada pelo nº de vertices)
+        if (*mcusto == 0 || *mcusto > cont)
         {
-            *mcusto = pTotal;
+            *mcusto = cont;
         }
-        
         return;
     }
     
-    if (atual == 0 || cheio == 1 || atualVist == 1) // se o vetor estiver cheio, ou este ja foi visitado retorna
-    {
-        return;
-    }
+    // Se não existir aresta, se o vetor estiver cheio, ou este ja foi visitado, retorna
+    if (atual == 0 || cheio == 1 || atualVist == 1) return;
+    
     else
     {
         adicionarVetor(percorridos, atual, 0);
         
         for (int i = 0; i < qVertices-1; i++)
         {
-            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], pTotal + pesos[atual-1][i], final, cont+1, mcusto);
+            caminho(qVertices, arestas, pesos, percorridos, arestas[atual-1][i], final, pTotal + pesos[atual-1][i], cont+1, mcusto);
         }
         percorridos[cont] = 0; //Zerando vetor se passou por todas as adjacências
     }
@@ -132,63 +101,58 @@ void caminho(int qVertices, int arestas[][qVertices-1], int pesos[][qVertices-1]
 
 int main()
 {
-    int vert, ares, n = 1, x, y, inicio, fim;
-    int mcusto = 0;
+    int qVert, qArest, Mdist = 0, mExc = 0, mcusto = 0;
     
-    scanf ("%d %d\n", &vert, &ares);
-    int vertices[vert], graus[vert], percorridos[vert], cont_arestas[vert], excentricidade[vert];
-    int arestas[vert][vert-1], pesos[vert][vert-1];
+    scanf ("%d %d\n", &qVert, &qArest);
+    int graus[qVert], percorridos[qVert], cont_arestas[qVert], excentricidade[qVert];
+    int arestas[qVert][qVert-1], pesos[qVert][qVert-1];
     
     // preencher todos os vetores com 0's
-    for (int i = 0; i < vert; i++)
+    for (int i = 0; i < qVert; i++)
     {
         graus[i] = 0;
         cont_arestas[i] = 0;
         percorridos[i] = 0;
         
-        for (int j = 0; j < vert - 1; j++)
+        for (int j = 0; j < qVert-1; j++)
         {
             arestas[i][j] = 0;
             pesos[i][j] = 0;
         }
     }
     
-    ler_string (vert, arestas, pesos, graus, cont_arestas, ares, 0);
-    
-    int maior = 0, mExc = 0;
-    
-    for (int i = 1; i <= vert; i++)
+    Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, 0);
+
+    for (int i = 1; i <= qVert; i++)
     {
-        for (int j = 1; j <= vert; j++)
+        for (int j = 1; j <= qVert; j++)
         {
-            if (i != j)
+            if (i != j) // 1 com 1, 2 com 2, ..., i com i não tem aresta
             {
-                mcusto = 0;  // zera para cada função
-                caminho(vert, arestas, pesos, percorridos, i, 0, j, 0, &mcusto);
+                // reset
+                mcusto = 0;
                 
-                //printf("%i %i (%i)\n", i, j, mcusto);
-                if (mcusto > maior)
-                {
-                    maior = mcusto;
-                }
+                caminho(qVert, arestas, pesos, percorridos, i, j, 0, 0, &mcusto);
+                
+                // qual for a adjacente mais longe eu fico guardando
+                if (mcusto > Mdist) Mdist = mcusto;
             }
         }
-        excentricidade[i-1] = maior;
-        if (mExc == 0 || mExc > excentricidade[i-1])
-        {
-            mExc = excentricidade[i-1];
-        }
-        maior = 0;
+        // depois que passar por todos os vértices adjacentes a i e verificar a distância pro vértice mais longe
+        // guardamos esse valor
+        excentricidade[i-1] = Mdist;
+        
+        // na primeira interação ou quando achar uma menor guardo para facilitar achar o centro
+        if (mExc == 0 || excentricidade[i-1] < mExc)    mExc = excentricidade[i-1];
+        
+        // reset
+        Mdist = 0;
     }
     
-    //printf("%i\n", mExc);
     printf("Centro do Grafo: ");
-    for (int i = 0; i < vert; i++)
+    for (int i = 0; i < qVert; i++)
     {
-        if (mExc == excentricidade[i])
-        {
-            printf("%i ", i+1);
-        }
+        if (mExc == excentricidade[i])  printf("%i ", i+1);
     }
     
     return 0;
