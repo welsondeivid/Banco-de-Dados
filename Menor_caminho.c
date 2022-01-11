@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int graus[], int cont_arestas[], int qArest, int cont)
+void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int cont_arestas[], int qArest, int cont)
 {
     int vert, ares, peso;
     char c;
@@ -25,13 +25,10 @@ void Grafo (int qVert, int arestas[][qVert - 1], int pesos[][qVert - 1], int gra
         pesos[vert-1][cont_arestas[vert-1]] = peso; //linha referente à mesma linha da matriz arestas
         pesos[ares-1][cont_arestas[ares-1]] = peso; //coluna referente à mesma coluna da matriz arestas
         
-        graus[vert-1] += 1;
-        graus[ares-1] += 1;
-        
         cont_arestas[ares-1] += 1;
         cont_arestas[vert-1] += 1;
         
-        Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, cont+1);
+        Grafo (qVert, arestas, pesos, cont_arestas, qArest, cont+1);
     }
     return;
 }
@@ -111,13 +108,12 @@ int main()
     int qVert, qArest, inicio, fim, mcusto = 0;
     scanf ("%d %d\n", &qVert, &qArest);
     
-    int graus[qVert], percorridos[qVert], cont_arestas[qVert], mcaminho[qVert];
+    int percorridos[qVert], cont_arestas[qVert], mcaminho[qVert];
     int arestas[qVert][qVert-1], pesos[qVert][qVert-1];
     
     // preencher todos os vetores com 0's
     for (int i = 0; i < qVert; i++)
     {
-        graus[i] = 0;
         cont_arestas[i] = 0;
         percorridos[i] = 0;
         
@@ -128,7 +124,7 @@ int main()
         }
     }
     
-    Grafo (qVert, arestas, pesos, graus, cont_arestas, qArest, 0);
+    Grafo (qVert, arestas, pesos, cont_arestas, qArest, 0);
     
     scanf ("%d %d", &inicio, &fim);
     if (inicio > qVert || inicio < 0 || fim > qVert || fim < 0)
