@@ -145,6 +145,12 @@ int main()
     int qVert, qArest, ccusto = 0;
     scanf ("%d %d\n", &qVert, &qArest);
     
+    if (qArest == 0)
+    {
+        printf ("Grafo nao Euleriano\nGrafo nao Hamiltoniano");
+        return 0;
+    }
+    
     int graus[qVert], percorridos[qVert], cont_arestas[qVert], mcaminho[qVert];
     int arestas[qVert][qVert-1], pesos[qVert][qVert-1];
     
