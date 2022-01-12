@@ -190,7 +190,7 @@ int main()
     if (ccusto != 0)
     {
         printf ("Grafo Hamiltoniano\n");
-        printf ("Exemplo de ciclo: ");
+        printf ("Menor ciclo: ");
         
         for (int i = 0; i < qVert; i++)
         {
