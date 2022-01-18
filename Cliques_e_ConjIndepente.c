@@ -187,7 +187,7 @@ void caminho(int qVertices, int arestas[][qVertices-1], int percorridos[], int M
 
 int main()
 {
-    int qVert, qArest, x, cmax = 0;
+    int qVert, qArest, x, cmax = 0, verificador = 0;
     
     scanf ("%d %d\n", &qVert, &qArest);
     
@@ -230,7 +230,7 @@ int main()
     }
     
     // na clique maxima precisa colocar verificando todas as arestas 2 2, 3 3 etc.. colocar num for (num vert)
-
+    
     if (cmax == 0)
     {
         for (int i = 0; i < qVert; i++)
@@ -240,20 +240,34 @@ int main()
                 if (arestas[i][j] != 0)
                 {
                     printf ("Tamanho da Clique Maxima: 2\nClique: %i %i\n", i+1, arestas[i][j]);
-                    printf("Nao possui conjunto independente");
-                    return 0;
+                    verificador = 1;
+                    break;
                 }
+            }
+            if (verificador == 1)
+            {
+                break;
             }
         }
     }
     
-    printf ("Tamanho da Clique Maxima: %d\nClique: ", cmax);
-    
-    for (int i = 0; i < qVert; i++)
+    if (verificador == 0)
     {
-        if (Maxclique[i] != 0)  printf ("%d ", Maxclique[i]);
+        if (cmax == 0)
+        {
+            printf ("Tamanho da Clique Maxima: 0");
+        }
+        else
+        {
+            printf ("Tamanho da Clique Maxima: %d\nClique: ", cmax);
+    
+            for (int i = 0; i < qVert; i++)
+            {
+                if (Maxclique[i] != 0)  printf ("%d ", Maxclique[i]);
+            }
+            printf("\n");
+        }
     }
-    printf("\n");
     
     // COMPLEMENTAR
     comp(qVert, arestas, complementar, n_vistos);
@@ -278,7 +292,19 @@ int main()
     // clique maxima do complementar:
     if (cmax == 0)
     {
-        printf("Nao possui conjunto independente");
+        for (int i = 0; i < qVert; i++)
+        {
+            for (int j = 0; j < qVert-1; j++)
+            {
+                if (complementar[i][j] != 0)
+                {
+                    printf ("Tamanho do conjunto independente Maximo: 2\nConjunto: %i %i\n", i+1, complementar[i][j]);
+                    return 0;
+                }
+            }
+        }
+        
+        printf ("Nao possui conjunto independente");
         return 0;
     }
     printf ("Tamanho do conjunto independente maximo: %d\nConjunto: ", cmax);
