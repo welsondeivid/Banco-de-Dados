@@ -27,12 +27,12 @@ void Prim(vector<pair<int, int>> grafo[], int n)
 
         while (!Fila.empty())
         {
-            int Vert_atual = Fila.top().second;
+            int Vert_vizinho = Fila.top().second;
             Fila.pop();
 
-            if (visitados[Vert_atual] == 0)
+            if (visitados[Vert_vizinho] == 0)
             {
-                atual = Vert_atual;
+                atual = Vert_vizinho;
                 break;
             }
         }
@@ -42,15 +42,15 @@ void Prim(vector<pair<int, int>> grafo[], int n)
 
         for (int i = 0; i < grafo[atual].size(); i++)
         {
-            int vizinho = grafo[atual][i].first;
+            int p_vizinho = grafo[atual][i].first;
 
-            int Vert_atual = grafo[atual][i].second;
+            int Vert_vizinho = grafo[atual][i].second;
 
-            if (pesos[Vert_atual] > vizinho && visitados[Vert_atual] == 0)
+            if (pesos[Vert_vizinho] > p_vizinho && visitados[Vert_vizinho] == 0)
             {
-                pesos[Vert_atual] = vizinho;
-                caminho[Vert_atual] = atual;
-                Fila.push({pesos[Vert_atual], Vert_atual});
+                pesos[Vert_vizinho] = p_vizinho;
+                caminho[Vert_vizinho] = atual;
+                Fila.push({pesos[Vert_vizinho], Vert_vizinho});
             }
         }
     }
