@@ -60,7 +60,7 @@ void Prim(vector<pair<int, int>> grafo[], int n)
     cout << "Arvore:" << endl;
     for (int i = 1; i < n; i++)
     {
-        cout << caminho[i] << " -> " << i << " = " << pesos[i] << endl;
+        cout << caminho[i] << " -- " << i << ", peso = " << pesos[i] << endl;
     }
 
     for (int i = 0; i < n; i++) 
@@ -74,13 +74,18 @@ int main()
 {
     int n, m;
     cin >> n >> m;
+    
     vector<pair<int, int>> grafo[n];
     
     int u, v, peso;
+    char c;
 
     for (int i = 0; i < m; i++)
     {
-        cin >> u >> v >> peso;
+        cin >> u >> v;
+        
+        if (c == ' ')   cin >> peso;
+        else    peso = 1;
 
         grafo[u].push_back({peso, v});
         grafo[v].push_back({peso, u});
