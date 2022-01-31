@@ -3,6 +3,7 @@
 #include <vector>
 
 using namespace std;
+
 vector<int> par, krk;
 
 int fset (int x)
@@ -53,7 +54,7 @@ void Kruskal (vector <vector<pair<int,int>>> listaAdjacencia, vector <pair<int, 
     for (int i = 0; i < arvore.size(); i++)
     {
         Pmin += arvore[i].first;
-        cout << arvore[i].second.first << " -> " << arvore[i].second.second << " = " << arvore[i].first << endl;  
+        cout << arvore[i].second.first << " -- " << arvore[i].second.second << ", peso = " << arvore[i].first << endl;  
     }
     cout << endl << "Peso AGM = " << Pmin; 
 }
@@ -61,6 +62,7 @@ void Kruskal (vector <vector<pair<int,int>>> listaAdjacencia, vector <pair<int, 
 int main()
 {
     int n, m, u, v, peso;
+    char c;
     
     vector <vector<pair <int,int>>> listaAdjacencia;
     vector <pair<int, pair <int,int>>> listaAresta;
@@ -73,7 +75,12 @@ int main()
 
     for (int i = 0; i < m; i++)
     {
-        cin >> u >> v >> peso;
+        cin >> u >> v;
+        scanf ("%c", &c);
+        
+        if (c == ' ') cin >> peso;
+        else    peso = 1;
+        
         listaAdjacencia[u].push_back(pair<int,int>(v, peso));
         listaAdjacencia[v].push_back(pair<int,int>(u, peso));
         listaAresta.push_back(make_pair(peso, pair<int,int>(u,v)));
