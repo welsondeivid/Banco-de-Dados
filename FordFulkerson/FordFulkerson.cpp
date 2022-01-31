@@ -93,6 +93,12 @@ int main()
     
     cin >> inicio >> fim;
     
+    if (inicio < 0 || inicio >= qVert || fim < 0 || fim >= qVert)
+    {
+        cout << "Vertice(s) fora do grafo";
+        return 0;
+    }
+    
     for (int i = 0; i < qAresta; i++)
     {
         cin >> u >> v;
