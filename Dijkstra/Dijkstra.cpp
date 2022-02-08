@@ -38,60 +38,85 @@ void Dijkstra (int inicio, vector<vector<pair<int, int>>> &grafo, vector<int> &d
     //cout << "O menor custo de " << inicio << " para " << fim << ": " << dist[fim];
 }
 
+int Ler_Arquivo (FILE *arq, char *ch)
+{
+	int num = 0;
+
+	*ch = fgetc(arq);
+    num = int(*ch) - 48;
+    *ch = fgetc(arq);
+
+    return num;
+}
+
 int main()
 {
     int n, m, u, v, peso, inicio;
-    char c;
-    cin >> n >> m; 
-    
-    vector<int> dist;
-    vector<int> visit;
-    vector<vector<pair<int, int>>> grafo;
-    
-    grafo.resize(n);
-    dist.resize(n);
-    visit.resize(n);
-    
-    for (int i = 0; i < m; i++)
-    {
-        cin >> u >> v;
-        scanf ("%c", &c);
-        
-        if (c == ' ')   cin >> peso;
-        
-        else    peso = 1;
-        
-        grafo[u].push_back ({peso, v});
-        grafo[v].push_back ({peso, u});
-    }
-    
-    for (int i = 0; i < n; i++)
-    {
-        dist[i] = INF;
-        visit[i] = 0;
-    }
-    
-    cin >> inicio;
-    
-    if (inicio < 0 || inicio >= n)
-    {
-        cout << "Vertice nao pertence ao grafo";
-        return 0;
-    }
-    
-    Dijkstra (inicio, grafo, dist, visit);
-    
-    for (int i = 0; i < n; i++)
-    {
-        if (i != inicio)
-        {
-            cout << "O menor custo de " << inicio << " para " << i << ": ";
-        
-            if (dist[i] == INF)     cout << "Infinita" << endl;
-            
-            else    cout << dist[i] << endl;
-        }
-    }
+    char ch;
+    char Entrada[] = {"DijkstraEntrada.txt"};
+    FILE *arq;
 
+    arq = fopen (Entrada, "r");
+
+    if(arq == NULL)	printf("Erro, nao foi possivel abrir o arquivo\n");
+
+    else
+    {
+    	n = Ler_Arquivo(arq, &ch);
+    	m = Ler_Arquivo(arq, &ch);
+	    
+	    vector<int> dist;
+	    vector<int> visit;
+	    vector<vector<pair<int, int>>> grafo;
+	    
+	    grafo.resize(n);
+	    dist.resize(n);
+	    visit.resize(n);
+	    
+	    for (int i = 0; i < m; i++)
+	    {
+	    	u = Ler_Arquivo(arq, &ch);
+	    	v = Ler_Arquivo(arq, &ch);
+	        
+	        if (ch == ' ')	peso = Ler_Arquivo(arq, &ch);
+	        
+	        else	peso = 1;
+	        
+	        grafo[u].push_back ({peso, v});
+	        grafo[v].push_back ({peso, u});
+	    }
+
+	    fclose(arq);
+	    
+	    for (int i = 0; i < n; i++)
+	    {
+	        dist[i] = INF;
+	        visit[i] = 0;
+	    }
+	    
+	    cout << "Digite o vertice inicial: " << endl;
+	    cin >> inicio;
+	    
+	    if (inicio < 0 || inicio >= n)
+	    {
+	        cout << "Vertice nao pertence ao grafo";
+	        return 0;
+	    }
+	    
+	    Dijkstra (inicio, grafo, dist, visit);
+	    
+	    for (int i = 0; i < n; i++)
+	    {
+	        if (i != inicio)
+	        {
+	            cout << "O menor custo de " << inicio << " para " << i << ": ";
+	        
+	            if (dist[i] == INF)     cout << "Infinita" << endl;
+	            
+	            else    cout << dist[i] << endl;
+	        }
+	    }
+    }
+    
     return 0;
 }
