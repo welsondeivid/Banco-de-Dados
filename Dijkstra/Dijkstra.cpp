@@ -1,8 +1,16 @@
 #include <bits/stdc++.h>
+#include <string.h>
 #include <vector>
 #define INF 9999999
 
 using namespace std;
+
+struct Distancia
+{
+   int custo;
+   int indice;
+};
+
 
 void Dijkstra (int inicio, vector<vector<pair<int, int>>> &grafo, vector<int> &dist, vector<int> &visit)
 {
@@ -38,84 +46,107 @@ void Dijkstra (int inicio, vector<vector<pair<int, int>>> &grafo, vector<int> &d
     //cout << "O menor custo de " << inicio << " para " << fim << ": " << dist[fim];
 }
 
-int Ler_Arquivo (FILE *arq, char *ch)
+bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 {
-	int num = 0;
-
-	*ch = fgetc(arq);
-    num = int(*ch) - 48;
-    *ch = fgetc(arq);
-
-    return num;
+   return p1.custo < p2.custo;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    int n, m, u, v, peso, inicio;
-    char ch;
-    char Entrada[] = {"DijkstraEntrada.txt"};
-    FILE *arq;
+	int inicio = 0, vef = 0;
+	if (argc > 1)
+	{
+		for (int i = 1; i < argc; i++)
+		{
+			if (strcmp(argv[i], "-i") == 0)
+			{
+				//cout << "INICIAL" << argv[i+1] << endl;
+				inicio = stoi(argv[i+1]);
+				i++;
+			}
+			else if (strcmp(argv[i], "-s") == 0)
+			{
+                vef = 1;
+			}
+			cout << i << ' ' << argv[i] << endl;
+		}
+	}
+	
+    int n, m, u, v, peso;
+    char c;
+    cin >> n >> m; 
+    
+    vector<int> dist;
+    vector<int> visit;
+    vector<vector<pair<int, int>>> grafo;
+    
+    grafo.resize(n);
+    dist.resize(n);
+    visit.resize(n);
+    
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v;
+        scanf ("%c", &c);
+        
+        if (c == ' ')   cin >> peso;
+        
+        else    peso = 1;
+        
+        grafo[u].push_back ({peso, v});
+        grafo[v].push_back ({peso, u});
+    }
+    
+    for (int i = 0; i < n; i++)
+    {
+        dist[i] = INF;
+        visit[i] = 0;
+    }
+    
+    if (inicio < 0 || inicio >= n)
+    {
+        cout << "Vertice nao pertence ao grafo";
+        return 0;
+    }
+    
+    Dijkstra (inicio, grafo, dist, visit);
+    
+	vector<Distancia> vet;
 
-    arq = fopen (Entrada, "r");
-
-    if(arq == NULL)	printf("Erro, nao foi possivel abrir o arquivo\n");
-
+    // Crescente
+    if (vef == 1)
+    {
+        for (int i = 0; i < n; i++)
+        {
+    		vet.push_back({dist[i], i});
+        }
+    	sort(vet.begin(), vet.end(), DistanciaMenor);
+    
+    	for (const auto& v : vet)
+        {
+            if (inicio != v.indice)
+            {
+                cout << "O menor custo de " << inicio << " para " << v.indice << ": ";
+            
+                if (v.custo == INF)     cout << "Infinita" << endl;
+                
+                else    cout << v.custo << endl;
+            }
+        }
+    }
     else
     {
-    	n = Ler_Arquivo(arq, &ch);
-    	m = Ler_Arquivo(arq, &ch);
-	    
-	    vector<int> dist;
-	    vector<int> visit;
-	    vector<vector<pair<int, int>>> grafo;
-	    
-	    grafo.resize(n);
-	    dist.resize(n);
-	    visit.resize(n);
-	    
-	    for (int i = 0; i < m; i++)
-	    {
-	    	u = Ler_Arquivo(arq, &ch);
-	    	v = Ler_Arquivo(arq, &ch);
-	        
-	        if (ch == ' ')	peso = Ler_Arquivo(arq, &ch);
-	        
-	        else	peso = 1;
-	        
-	        grafo[u].push_back ({peso, v});
-	        grafo[v].push_back ({peso, u});
-	    }
-
-	    fclose(arq);
-	    
-	    for (int i = 0; i < n; i++)
-	    {
-	        dist[i] = INF;
-	        visit[i] = 0;
-	    }
-	    
-	    cout << "Digite o vertice inicial: " << endl;
-	    cin >> inicio;
-	    
-	    if (inicio < 0 || inicio >= n)
-	    {
-	        cout << "Vertice nao pertence ao grafo";
-	        return 0;
-	    }
-	    
-	    Dijkstra (inicio, grafo, dist, visit);
-	    
-	    for (int i = 0; i < n; i++)
-	    {
-	        if (i != inicio)
-	        {
-	            cout << "O menor custo de " << inicio << " para " << i << ": ";
-	        
-	            if (dist[i] == INF)     cout << "Infinita" << endl;
-	            
-	            else    cout << dist[i] << endl;
-	        }
-	    }
+        for (int i = 0; i < n; i++)
+        {
+            if (i != inicio)
+            {
+                cout << "O menor custo de " << inicio << " para " << i << ": ";
+            
+                if (dist[i] == INF)     cout << "Infinita" << endl;
+                
+                else    cout << dist[i] << endl;
+            }
+        }
     }
     
     return 0;
