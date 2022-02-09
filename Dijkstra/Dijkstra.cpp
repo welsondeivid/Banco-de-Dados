@@ -64,8 +64,10 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 
 int main(int argc, char *argv[])
 {
-    int n, m, u, v, peso, inicio = 0, vef = 0;
+    int n, m, u, v, peso, inicio = 0;
     char ch, Entrada[255];
+
+	bool crescente = false, saida = false;
     
 	if (argc > 1)
 	{
@@ -75,25 +77,30 @@ int main(int argc, char *argv[])
 			{
 				//cout << "INICIAL" << argv[i+1] << endl;
 				inicio = stoi(argv[i+1]);
+				//cout << "as: " << inicio << endl;
 				i++;
 			}
 			else if (strcmp(argv[i], "-s") == 0)
 			{
-				vef = 1;
+				crescente = true;
 			}
-			else if (strcmp(argv[i], "-f"))
+			else if (strcmp(argv[i], "-f") == 0)
 			{
 			    strcpy (Entrada, argv[i+1]);
 			    i++;
 			}
+			else if (strcmp(argv[i], "-o") == 0)
+			{
+				saida = true;
+			}
 		}
 	}
-	
+
 	FILE *arq;
 
     arq = fopen (Entrada, "r");
     
-    if(arq == NULL)	
+    if (arq == NULL)
     {
     	printf("Erro, nao foi possivel abrir o arquivo\n");
     	return 0;
@@ -102,8 +109,6 @@ int main(int argc, char *argv[])
     n = Ler_Arquivo (arq, &ch);
     m = Ler_Arquivo (arq, &ch);
 
-    //cout << "Entrou";
-    
     vector<int> dist;
     vector<int> visit;
     vector<vector<pair<int, int>>> grafo;
@@ -117,15 +122,19 @@ int main(int argc, char *argv[])
         u = Ler_Arquivo (arq, &ch);
         v = Ler_Arquivo (arq, &ch);
         
-        if (ch == ' ')   Ler_Arquivo (arq, &ch);
+        if (ch == ' ')   peso = Ler_Arquivo (arq, &ch);
         
         else    peso = 1;
         
         grafo[u].push_back ({peso, v});
         grafo[v].push_back ({peso, u});
     }
+
+	//cout << "lido " << n << m << endl;
     
     fclose(arq);
+
+	//cout << "FECHADO";
     
     for (int i = 0; i < n; i++)
     {
@@ -144,7 +153,7 @@ int main(int argc, char *argv[])
 	vector<Distancia> vet;
 
     // Crescente
-    if (vef == 1)
+    if (crescente)
     {
         for (int i = 0; i < n; i++)
         {
@@ -178,6 +187,6 @@ int main(int argc, char *argv[])
             }
         }
     }
-    
+
     return 0;
 }
