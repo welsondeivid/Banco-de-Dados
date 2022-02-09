@@ -65,9 +65,9 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 int main(int argc, char *argv[])
 {
     int n, m, u, v, peso, inicio = 0;
-    char ch, Entrada[255];
+    char ch, Entrada[255], esc, Saida[255];
 
-	bool crescente = false, saida = false;
+	bool crescente = false, s = false, ent = false;
     
 	if (argc > 1)
 	{
@@ -75,9 +75,7 @@ int main(int argc, char *argv[])
 		{
 			if (strcmp(argv[i], "-i") == 0)
 			{
-				//cout << "INICIAL" << argv[i+1] << endl;
 				inicio = stoi(argv[i+1]);
-				//cout << "as: " << inicio << endl;
 				i++;
 			}
 			else if (strcmp(argv[i], "-s") == 0)
@@ -87,27 +85,51 @@ int main(int argc, char *argv[])
 			else if (strcmp(argv[i], "-f") == 0)
 			{
 			    strcpy (Entrada, argv[i+1]);
+			    ent = true;
 			    i++;
 			}
 			else if (strcmp(argv[i], "-o") == 0)
 			{
-				saida = true;
+				strcpy (Saida, argv[i+1]);
+				s = true;
+				i++;
+			}
+			else if (strcmp(argv[i], "-h") == 0)
+			{
+				cout << "-i vertice inicial" << endl;
+				cout << "-s Mostra os pesos em ordem crescente" << endl;
+				cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
+				cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl; 
 			}
 		}
 	}
 
 	FILE *arq;
+	FILE *out;
+
+	if (!ent)
+	{
+		cout << "Digite o nome do arquivo de entrada com a extensao: ";
+		cin >> Entrada;
+	}
 
     arq = fopen (Entrada, "r");
     
     if (arq == NULL)
     {
-    	printf("Erro, nao foi possivel abrir o arquivo\n");
+    	cout << "Erro, nao foi possivel abrir o arquivo" << endl;
     	return 0;
     }
     
     n = Ler_Arquivo (arq, &ch);
     m = Ler_Arquivo (arq, &ch);
+
+    if (inicio < 0 || inicio >= n)
+    {
+    	if (s)	fprintf (out, "Vertice nao pertence ao grafo");
+        else	cout << "Vertice nao pertence ao grafo";
+        return 0;
+    }
 
     vector<int> dist;
     vector<int> visit;
@@ -129,23 +151,23 @@ int main(int argc, char *argv[])
         grafo[u].push_back ({peso, v});
         grafo[v].push_back ({peso, u});
     }
-
-	//cout << "lido " << n << m << endl;
     
     fclose(arq);
 
-	//cout << "FECHADO";
+    if (s)
+    {
+    	out = fopen (Saida, "w");
+    	if (out == NULL)
+	    {
+	    	cout << "Erro, nao foi possivel abrir o arquivo de saida" << endl;
+	    	return 0;
+	    }
+    }
     
     for (int i = 0; i < n; i++)
     {
         dist[i] = INF;
         visit[i] = 0;
-    }
-    
-    if (inicio < 0 || inicio >= n)
-    {
-        cout << "Vertice nao pertence ao grafo";
-        return 0;
     }
     
     Dijkstra (inicio, grafo, dist, visit);
@@ -165,11 +187,20 @@ int main(int argc, char *argv[])
         {
             if (inicio != v.indice)
             {
-                cout << "O menor custo de " << inicio << " para " << v.indice << ": ";
+            	if (s)	fprintf (out, "O menor custo de %d para %d: ", inicio, v.indice);
+                else	cout << "O menor custo de " << inicio << " para " << v.indice << ": ";
             
-                if (v.custo == INF)     cout << "Infinita" << endl;
+                if (v.custo == INF)     
+                {
+                	if (s)	fprintf (out, "Infinita\n");
+                	else cout << "Infinita" << endl;
+                }
                 
-                else    cout << v.custo << endl;
+                else
+                {
+                	if (s)	fprintf (out, "%d\n", v.custo);
+                	else	cout << v.custo << endl;
+                }
             }
         }
     }
@@ -179,14 +210,24 @@ int main(int argc, char *argv[])
         {
             if (i != inicio)
             {
-                cout << "O menor custo de " << inicio << " para " << i << ": ";
+            	if (s)	fprintf (out, "O menor custo de %d para %d: ", inicio, i);
+                else	cout << "O menor custo de " << inicio << " para " << i << ": ";
             
-                if (dist[i] == INF)     cout << "Infinita" << endl;
+                if (dist[i] == INF)     
+                {
+                	if (s)	fprintf (out, "Infinita\n");
+                	else cout << "Infinita" << endl;
+                }
                 
-                else    cout << dist[i] << endl;
+                else
+                {
+                	if (s)	fprintf (out, "%d\n", dist[i]);
+                	else	cout << dist[i] << endl;
+                }
             }
         }
     }
 
+    if (s)	fclose (out);
     return 0;
 }
