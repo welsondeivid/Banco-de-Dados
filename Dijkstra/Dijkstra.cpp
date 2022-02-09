@@ -46,6 +46,17 @@ void Dijkstra (int inicio, vector<vector<pair<int, int>>> &grafo, vector<int> &d
     //cout << "O menor custo de " << inicio << " para " << fim << ": " << dist[fim];
 }
 
+int Ler_Arquivo (FILE *arq, char *ch)
+{
+	int num = 0;
+
+	*ch = fgetc(arq);
+    num = int(*ch) - 48;
+    *ch = fgetc(arq);
+
+    return num;
+}
+
 bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 {
    return p1.custo < p2.custo;
@@ -53,7 +64,9 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 
 int main(int argc, char *argv[])
 {
-	int inicio = 0, vef = 0;
+    int n, m, u, v, peso, inicio = 0, vef = 0;
+    char ch, Entrada[255];
+    
 	if (argc > 1)
 	{
 		for (int i = 1; i < argc; i++)
@@ -66,15 +79,30 @@ int main(int argc, char *argv[])
 			}
 			else if (strcmp(argv[i], "-s") == 0)
 			{
-                vef = 1;
+				vef = 1;
 			}
-			cout << i << ' ' << argv[i] << endl;
+			else if (strcmp(argv[i], "-f"))
+			{
+			    strcpy (Entrada, argv[i+1]);
+			    i++;
+			}
 		}
 	}
 	
-    int n, m, u, v, peso;
-    char c;
-    cin >> n >> m; 
+	FILE *arq;
+
+    arq = fopen (Entrada, "r");
+    
+    if(arq == NULL)	
+    {
+    	printf("Erro, nao foi possivel abrir o arquivo\n");
+    	return 0;
+    }
+    
+    n = Ler_Arquivo (arq, &ch);
+    m = Ler_Arquivo (arq, &ch);
+
+    //cout << "Entrou";
     
     vector<int> dist;
     vector<int> visit;
@@ -86,16 +114,18 @@ int main(int argc, char *argv[])
     
     for (int i = 0; i < m; i++)
     {
-        cin >> u >> v;
-        scanf ("%c", &c);
+        u = Ler_Arquivo (arq, &ch);
+        v = Ler_Arquivo (arq, &ch);
         
-        if (c == ' ')   cin >> peso;
+        if (ch == ' ')   Ler_Arquivo (arq, &ch);
         
         else    peso = 1;
         
         grafo[u].push_back ({peso, v});
         grafo[v].push_back ({peso, u});
     }
+    
+    fclose(arq);
     
     for (int i = 0; i < n; i++)
     {
