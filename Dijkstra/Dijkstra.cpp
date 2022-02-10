@@ -46,12 +46,12 @@ void Dijkstra (int inicio, vector<vector<pair<int, int>>> &grafo, vector<int> &d
     //cout << "O menor custo de " << inicio << " para " << fim << ": " << dist[fim];
 }
 
-int Ler_Arquivo (FILE *arq, char *ch)
+int Ler_Arquivo (FILE *arq, char *ch, char verif[])
 {
 	int num = 0;
 
-	*ch = fgetc(arq);
-    num = int(*ch) - 48;
+	fscanf (arq, "%s", verif);
+    num = stoi(verif);
     *ch = fgetc(arq);
 
     return num;
@@ -65,7 +65,7 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 int main(int argc, char *argv[])
 {
     int n, m, u, v, peso, inicio = 0;
-    char ch, Entrada[255], esc, Saida[255];
+    char ch, Entrada[255], esc, Saida[255], verif[5];
 
 	bool crescente = false, s = false, ent = false;
     
@@ -121,8 +121,8 @@ int main(int argc, char *argv[])
     	return 0;
     }
     
-    n = Ler_Arquivo (arq, &ch);
-    m = Ler_Arquivo (arq, &ch);
+    n = Ler_Arquivo (arq, &ch, verif);
+    m = Ler_Arquivo (arq, &ch, verif);
 
     if (inicio < 0 || inicio >= n)
     {
@@ -141,10 +141,10 @@ int main(int argc, char *argv[])
     
     for (int i = 0; i < m; i++)
     {
-        u = Ler_Arquivo (arq, &ch);
-        v = Ler_Arquivo (arq, &ch);
+        u = Ler_Arquivo (arq, &ch, verif);
+        v = Ler_Arquivo (arq, &ch, verif);
         
-        if (ch == ' ')   peso = Ler_Arquivo (arq, &ch);
+        if (ch == ' ')   peso = Ler_Arquivo (arq, &ch, verif);
         
         else    peso = 1;
         
