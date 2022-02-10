@@ -32,7 +32,7 @@ int busca(vector<vector<int>> grafo, int qVert, vector<vector<int>> res, int ini
     return visitados[fim];
 }
 
-void FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim)
+int FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim)
 {
     int aux, fMax = 0;
     int *par = new int[qVert];
@@ -72,18 +72,94 @@ void FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim)
         }
         fMax += fluxo;
     }
-    cout << "Maior fluxo possivel: " << fMax;
+    return fMax;
 }
 
-int main()
+int Ler_Arquivo (FILE *arq, char *ch, char verif[])
+{
+    int num = 0;
+
+    fscanf (arq, "%s", verif);
+    num = stoi(verif);
+    *ch = fgetc(arq);
+
+    return num;
+}
+
+int main(int argc, char *argv[])
 {
     vector<vector<int>> Grafo;
     
-    int u, v, peso, qVert, qAresta, inicio, fim;
-    char c;
+    int u, v, peso, qVert, qAresta, inicio = 0, fim = 0;
+    char ch, Entrada[255], Saida[255], verif[5];
+
+    bool s = false, ent = false;
     
-    cin >> qVert >> qAresta;
+    if (argc > 1)
+    {
+        for (int i = 1; i < argc; i++)
+        {
+            if (strcmp(argv[i], "-i") == 0)
+            {
+                inicio = stoi(argv[i+1]);
+                i++;
+            }
+            else if (strcmp(argv[i], "-l") == 0)
+            {
+                fim = stoi(argv[i+1]);
+                i++;
+            }
+            else if (strcmp(argv[i], "-f") == 0)
+            {
+                strcpy (Entrada, argv[i+1]);
+                ent = true;
+                i++;
+            }
+            else if (strcmp(argv[i], "-o") == 0)
+            {
+                strcpy (Saida, argv[i+1]);
+                s = true;
+                i++;
+            }
+            else if (strcmp(argv[i], "-h") == 0)
+            {
+                cout << "-i Vertice inicial" << endl;
+                cout << "-l Vertice final" << endl;
+                cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
+                cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl;
+
+                return 0;
+            }
+        }
+    }
+
+    FILE *arq;
+    FILE *out;
+
+    if (!ent)
+    {
+        cout << "Digite o nome do arquivo de entrada com a extensao: ";
+        cin >> Entrada;
+    }
+
+    arq = fopen (Entrada, "r");
     
+    if (arq == NULL)
+    {
+        cout << "Erro, nao foi possivel abrir o arquivo" << endl;
+        return 0;
+    }
+    
+    qVert = Ler_Arquivo (arq, &ch, verif);
+    qAresta = Ler_Arquivo (arq, &ch, verif);
+    
+    if (inicio < 0 || inicio >= qVert || fim < 0 || fim >= qVert)
+    {
+        if (s)  fprintf (out, "Vertice nao pertence ao grafo");
+        else    cout << "Vertice nao pertence ao grafo";
+        return 0;
+    }
+
     Grafo.resize(qVert);
     
     for (int i = 0; i < qVert; i++)
@@ -91,26 +167,34 @@ int main()
         Grafo[i].resize(qVert);
     }
     
-    cin >> inicio >> fim;
-    
-    if (inicio < 0 || inicio >= qVert || fim < 0 || fim >= qVert)
-    {
-        cout << "Vertice(s) fora do grafo";
-        return 0;
-    }
-    
     for (int i = 0; i < qAresta; i++)
     {
-        cin >> u >> v;
-        scanf ("%c", &c);
+        u = Ler_Arquivo (arq, &ch, verif);
+        v = Ler_Arquivo (arq, &ch, verif);
         
-        if (c == ' ')   cin >> peso;
+        if (ch == ' ')   peso = Ler_Arquivo (arq, &ch, verif);
         
         else    peso = 1;
         
         Grafo[u][v] = peso;
     }
-    
-    FordFulkerson(Grafo, qVert, inicio, fim);
+
+    fclose(arq); 
+
+    if (s)
+    {
+        out = fopen (Saida, "w");
+        if (out == NULL)
+        {
+            cout << "Erro, nao foi possivel abrir o arquivo de saida" << endl;
+            return 0;
+        }
+
+        fprintf (out, "O Maior Fluxo Possivel: %d", FordFulkerson(Grafo, qVert, inicio, fim));
+        fclose(out);
+    }
+
+    else    cout << "O Maior Fluxo Possivel: " << FordFulkerson(Grafo, qVert, inicio, fim);;
+
     return 0;
 }
