@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <string.h>
 #include <vector>
 #define INF 9999999
 
@@ -65,7 +64,7 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 int main(int argc, char *argv[])
 {
     int n, m, u, v, peso, inicio = 0;
-    char ch, Entrada[255], esc, Saida[255], verif[5];
+    char ch, Entrada[255], Saida[255], verif[5];
 
 	bool crescente = false, s = false, ent = false;
     
@@ -99,7 +98,9 @@ int main(int argc, char *argv[])
 				cout << "-i vertice inicial" << endl;
 				cout << "-s Mostra os pesos em ordem crescente" << endl;
 				cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
-				cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl; 
+				cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl;
+
+				return 0;
 			}
 		}
 	}
