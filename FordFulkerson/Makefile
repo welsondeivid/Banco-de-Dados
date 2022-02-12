@@ -1,2 +1,2 @@
 all:
-  g++ FordFulkerson.cpp -o FordFulkerson
+    g++ FordFulkerson.cpp -o FordFulkerson
