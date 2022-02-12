@@ -3,6 +3,18 @@
 
 using namespace std;
 
+struct Distancia
+{
+   int custo;
+   int indice1;
+   int indice2;
+};
+
+bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
+{
+   return p1.custo < p2.custo;
+}
+
 void Prim(vector<pair<int, int>> grafo[], int n)
 {
     int pesos[n];
@@ -58,8 +70,10 @@ void Prim(vector<pair<int, int>> grafo[], int n)
     int PesoT = 0;
     
     cout << "Arvore:" << endl;
+    vector<Distancia> vet;
     for (int i = 1; i < n; i++)
     {
+        vet.push_back({pesos[i], caminho[i], i});
         cout << caminho[i] << " -- " << i << ", peso = " << pesos[i] << endl;
     }
 
@@ -67,7 +81,14 @@ void Prim(vector<pair<int, int>> grafo[], int n)
     {
         PesoT += pesos[i];
     }
-    cout << "Peso da AGM: " << PesoT;
+    cout << "Peso da AGM: " << PesoT << endl;
+    
+    sort(vet.begin(), vet.end(), DistanciaMenor);
+    
+    for (const auto& v : vet)
+    {
+        cout << v.indice1 << " -- " << v.indice2 << ", peso = " << v.custo << endl;
+    }
 }
 
 int main()
@@ -83,6 +104,7 @@ int main()
     for (int i = 0; i < m; i++)
     {
         cin >> u >> v;
+        scanf("%c", &c);
         
         if (c == ' ')   cin >> peso;
         else    peso = 1;
