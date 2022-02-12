@@ -15,7 +15,7 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
    return p1.custo < p2.custo;
 }
 
-void Prim(vector<pair<int, int>> grafo[], int n)
+int Prim(vector<pair<int, int>> grafo[], int n, bool s, char Saida[], bool crescente)
 {
     int pesos[n];
     int caminho[n];
@@ -68,51 +68,155 @@ void Prim(vector<pair<int, int>> grafo[], int n)
     }
 
     int PesoT = 0;
-    
-    cout << "Arvore:" << endl;
+    FILE *out;
     vector<Distancia> vet;
-    for (int i = 1; i < n; i++)
-    {
-        vet.push_back({pesos[i], caminho[i], i});
-        cout << caminho[i] << " -- " << i << ", peso = " << pesos[i] << endl;
-    }
-
+    
     for (int i = 0; i < n; i++) 
     {
         PesoT += pesos[i];
     }
-    cout << "Peso da AGM: " << PesoT << endl;
-    
-    sort(vet.begin(), vet.end(), DistanciaMenor);
-    
-    for (const auto& v : vet)
+    if (s)
     {
-        cout << v.indice1 << " -- " << v.indice2 << ", peso = " << v.custo << endl;
+        out = fopen (Saida, "w");
+    	if (out == NULL)
+	    {
+	    	cout << "Erro, nao foi possivel abrir o arquivo de saida" << endl;
+	    	return 0;
+	    }
+	    fprintf(out, "Arvore:\n");
+	    if (crescente)
+	    {
+	        for (int i = 1; i < n; i++)
+            {
+                vet.push_back({pesos[i], caminho[i], i});
+            }
+            
+            sort(vet.begin(), vet.end(), DistanciaMenor);
+            
+            for (const auto& v : vet)
+            {
+                fprintf(out, "%i -- %i,  peso = %i\n", v.indice1, v.indice2, v.custo);
+            }
+	    }
+	    else
+	    {
+	        for (int i = 1; i < n; i++)
+            {
+                fprintf(out, "%i -- %i,  peso = %i\n", caminho[i], i, pesos[i]);
+            }
+	    }
+	    fprintf(out, "Peso da AGM: %i\n", PesoT);
+
+        fclose(out);
+    }
+    else
+    {
+        cout << "Arvore:" << endl;
+	    if (crescente)
+	    {
+	        for (int i = 1; i < n; i++)
+            {
+                vet.push_back({pesos[i], caminho[i], i});
+            }
+            
+            sort(vet.begin(), vet.end(), DistanciaMenor);
+            
+            for (const auto& v : vet)
+            {
+                cout << v.indice1 << " -- " << v.indice2 << ", peso = " << v.custo << endl;
+            }
+	    }
+	    else
+	    {
+	        for (int i = 1; i < n; i++)
+            {
+                cout << caminho[i] << " -- " << i << ", peso = " << pesos[i] << endl;
+            }
+	    }
+	    cout << "Peso da AGM: " << PesoT << endl;
     }
 }
 
-int main()
+int Ler_Arquivo (FILE *arq, char *ch, char verif[])
 {
-    int n, m;
-    cin >> n >> m;
+	int num = 0;
+
+	fscanf (arq, "%s", verif);
+    num = stoi(verif);
+    *ch = fgetc(arq);
+
+    return num;
+}
+
+int main(int argc, char *argv[])
+{
+    int n, m, u, v, peso;
+    char ch, Entrada[255], Saida[255], verif[5];
+    bool crescente = false, s = false, ent = false;
+    
+    if (argc > 1)
+	{
+		for (int i = 1; i < argc; i++)
+		{
+			if (strcmp(argv[i], "-s") == 0)
+			{
+				crescente = true;
+			}
+			else if (strcmp(argv[i], "-f") == 0)
+			{
+			    strcpy (Entrada, argv[i+1]);
+			    ent = true;
+			    i++;
+			}
+			else if (strcmp(argv[i], "-o") == 0)
+			{
+				strcpy (Saida, argv[i+1]);
+				s = true;
+				i++;
+			}
+			else if (strcmp(argv[i], "-h") == 0)
+			{
+				cout << "-s Mostra os pesos em ordem crescente" << endl;
+				cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
+				cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl; 
+			}
+		}
+	}
+	
+	FILE *arq;
+
+	if (!ent)
+	{
+		cout << "Digite o nome do arquivo de entrada com a extensao: ";
+		cin >> Entrada;
+	}
+	
+	arq = fopen (Entrada, "r");
+    
+    if (arq == NULL)
+    {
+    	cout << "Erro, nao foi possivel abrir o arquivo" << endl;
+    	return 0;
+    }
+	
+    n = Ler_Arquivo (arq, &ch, verif);
+    m = Ler_Arquivo (arq, &ch, verif);
     
     vector<pair<int, int>> grafo[n];
-    
-    int u, v, peso;
-    char c;
 
     for (int i = 0; i < m; i++)
     {
-        cin >> u >> v;
-        scanf("%c", &c);
+        u = Ler_Arquivo (arq, &ch, verif);
+        v = Ler_Arquivo (arq, &ch, verif);
         
-        if (c == ' ')   cin >> peso;
+        if (ch == ' ')   peso = Ler_Arquivo (arq, &ch, verif);
         else    peso = 1;
 
         grafo[u].push_back({peso, v});
         grafo[v].push_back({peso, u});
     }
+    fclose(arq);
 
-    Prim(grafo, n);
+    Prim(grafo, n, s, Saida, crescente);
     return 0;
 }
