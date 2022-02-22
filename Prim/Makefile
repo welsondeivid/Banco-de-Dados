@@ -1,2 +1,2 @@
 all:
-    g++ Prim.cpp -o Prim
+	g++ Prim.cpp -o Prim
