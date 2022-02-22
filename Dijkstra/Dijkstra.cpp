@@ -63,7 +63,7 @@ bool DistanciaMenor(const Distancia& p1, const Distancia& p2)
 
 int main(int argc, char *argv[])
 {
-    int n, m, u, v, peso, inicio = 0;
+    int n, m, u, v, peso, inicio = 0, final = -1;
     char ch, Entrada[255], Saida[255], verif[5];
 
 	bool crescente = false, s = false, ent = false;
@@ -77,6 +77,11 @@ int main(int argc, char *argv[])
 				inicio = stoi(argv[i+1]);
 				i++;
 			}
+            else if (strcmp (argv[i], "-l") == 0)
+            {
+                final = stoi(argv[i+1]);
+                i++;
+            }
 			else if (strcmp(argv[i], "-s") == 0)
 			{
 				crescente = true;
@@ -96,6 +101,7 @@ int main(int argc, char *argv[])
 			else if (strcmp(argv[i], "-h") == 0)
 			{
 				cout << "-i vertice inicial" << endl;
+                cout << "-l vertice final" << endl;
 				cout << "-s Mostra os pesos em ordem crescente" << endl;
 				cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
 				cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl;
@@ -178,54 +184,70 @@ int main(int argc, char *argv[])
     // Crescente
     if (crescente)
     {
-        for (int i = 0; i < n; i++)
+        if (final == -1)
         {
-    		vet.push_back({dist[i], i});
-        }
-    	sort(vet.begin(), vet.end(), DistanciaMenor);
-    
-    	for (const auto& v : vet)
-        {
-            if (inicio != v.indice)
+            for (int i = 0; i < n; i++)
             {
-            	if (s)	fprintf (out, "O menor custo de %d para %d: ", inicio, v.indice);
-                else	cout << "O menor custo de " << inicio << " para " << v.indice << ": ";
-            
-                if (v.custo == INF)     
+                vet.push_back({dist[i], i});
+            }
+            sort(vet.begin(), vet.end(), DistanciaMenor);
+        
+            for (const auto& v : vet)
+            {
+                if (inicio != v.indice)
                 {
-                	if (s)	fprintf (out, "Infinita\n");
-                	else cout << "Infinita" << endl;
-                }
+                    if (s)  fprintf (out, "O menor custo de %d para %d: ", inicio, v.indice);
+                    else    cout << "O menor custo de " << inicio << " para " << v.indice << ": ";
                 
-                else
-                {
-                	if (s)	fprintf (out, "%d\n", v.custo);
-                	else	cout << v.custo << endl;
+                    if (v.custo == INF)     
+                    {
+                        if (s)  fprintf (out, "Infinita\n");
+                        else cout << "Infinita" << endl;
+                    }
+                    
+                    else
+                    {
+                        if (s)  fprintf (out, "%d\n", v.custo);
+                        else    cout << v.custo << endl;
+                    }
                 }
             }
+        }
+        else
+        {
+            if (s)  fprintf (out, "Distancia minima entre %d e %d: %d", inicio, final, dist[final]);
+            else    cout << "Distancia minima entre " << inicio << " e " << final << ": " << dist[final];
         }
     }
     else
     {
-        for (int i = 0; i < n; i++)
+        if (final == -1)
         {
-            if (i != inicio)
+            for (int i = 0; i < n; i++)
             {
-            	if (s)	fprintf (out, "O menor custo de %d para %d: ", inicio, i);
-                else	cout << "O menor custo de " << inicio << " para " << i << ": ";
-            
-                if (dist[i] == INF)     
+                if (i != inicio)
                 {
-                	if (s)	fprintf (out, "Infinita\n");
-                	else cout << "Infinita" << endl;
-                }
-                
-                else
-                {
-                	if (s)	fprintf (out, "%d\n", dist[i]);
-                	else	cout << dist[i] << endl;
+                    if (s)  fprintf (out, "O menor custo de %d para %d: ", inicio, i);
+                    else    cout << "O menor custo de " << inicio << " para " << i << ": ";
+                    
+                    if (dist[i] == INF)     
+                    {
+                        if (s)  fprintf (out, "Infinita\n");
+                        else cout << "Infinita" << endl;
+                    }
+                        
+                    else
+                    {
+                        if (s)  fprintf (out, "%d\n", dist[i]);
+                        else    cout << dist[i] << endl;
+                    }
                 }
             }
+        }
+        else
+        {
+            if (s)  fprintf (out, "Distancia minima entre %d e %d: %d", inicio, final, dist[final]);
+            else    cout << "Distancia minima entre " << inicio << " e " << final << ": " << dist[final];
         }
     }
 
