@@ -6,28 +6,38 @@ Para compilar digite make, para executar nome_do_algoritmo.exe -h (para saber qu
 
 # Dijkstra
 
-make.
-Dijkstra.exe -h.
-E vão aparecer os parâmetros permitidos.
+make
+
+Dijkstra.exe -h
+
+E vão aparecer os parâmetros permitidos
 
 # FordFulkerson
 
 make
+
 FordFulkerson.exe -h
+
 E vão aparecer os parâmetros permitidos
 
 # Kruskal
 
 make
+
 Kruskal.exe -h
+
 E vão aparecer os parâmetros permitidos
 
 # Prim
 
 make
+
 Prim.exe -h
+
 E vão aparecer os parâmetros permitidos
 
 Se por acaso o comando make falhar, use o comando:
+
 g++ nome_do_algoritmo.cpp -o nome_do_algoritmo
+
 Ex: g++ Prim.cpp -o Prim
