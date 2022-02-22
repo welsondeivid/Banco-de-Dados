@@ -32,24 +32,10 @@ int busca(vector<vector<int>> grafo, int qVert, vector<vector<int>> res, int ini
     return visitados[fim];
 }
 
-int FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim)
+int FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim, vector<vector<int>> res)
 {
     int aux, fMax = 0;
     int *par = new int[qVert];
-    
-    vector<vector<int>> res;
-    
-    res.resize(qVert);
-    
-    for (int i = 0; i < qVert; i++)
-    {
-        res[i].resize(qVert);
-        
-        for (int j = 0; j < qVert; j++)
-        {
-            res[i][j] = grafo[i][j];
-        }
-    }
     
     while (busca(grafo, qVert, res, inicio, fim, par) == 1)
     {
@@ -72,6 +58,7 @@ int FordFulkerson(vector<vector<int>> grafo, int qVert, int inicio, int fim)
         }
         fMax += fluxo;
     }
+
     return fMax;
 }
 
@@ -89,11 +76,12 @@ int Ler_Arquivo (FILE *arq, char *ch, char verif[])
 int main(int argc, char *argv[])
 {
     vector<vector<int>> Grafo;
+    vector<vector<int>> res;
     
     int u, v, peso, qVert, qAresta, inicio = 0, fim = 0;
     char ch, Entrada[255], Saida[255], verif[5];
 
-    bool s = false, ent = false;
+    bool s = false, ent = false, crescente = false;
     
     if (argc > 1)
     {
@@ -108,6 +96,10 @@ int main(int argc, char *argv[])
             {
                 fim = stoi(argv[i+1]);
                 i++;
+            }
+            else if (strcmp(argv[i], "-s") == 0)
+            {
+                crescente = true;
             }
             else if (strcmp(argv[i], "-f") == 0)
             {
@@ -125,6 +117,7 @@ int main(int argc, char *argv[])
             {
                 cout << "-i Vertice inicial" << endl;
                 cout << "-l Vertice final" << endl;
+                cout << "-s Mostra o fluxo de todos os vertices" << endl;
                 cout << "-f Pegar a entrada de um arquivo definido pelo usuario" << endl;
                 cout << "-o Mostra a saida no arquivo definido pelo usuario" << endl;
 
@@ -161,6 +154,7 @@ int main(int argc, char *argv[])
     }
 
     Grafo.resize(qVert);
+    res.resize(qVert);
     
     for (int i = 0; i < qVert; i++)
     {
@@ -179,7 +173,18 @@ int main(int argc, char *argv[])
         Grafo[u][v] = peso;
     }
 
-    fclose(arq); 
+    for (int i = 0; i < qVert; i++)
+    {
+        res[i].resize(qVert);
+        for (int j = 0; j < qVert; j++)
+        {
+            res[i][j] = Grafo[i][j];
+        }
+    }
+
+    fclose(arq);
+
+    int fmax = FordFulkerson(Grafo, qVert, inicio, fim, res);
 
     if (s)
     {
@@ -190,11 +195,50 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        fprintf (out, "O Maior Fluxo Possivel: %d", FordFulkerson(Grafo, qVert, inicio, fim));
+        if (crescente)
+        {
+            for (int i = 0; i < qVert; i++)
+            {
+                fprintf (out, "Vertice %d\n", i);
+
+                for (int j = 0; j < qVert; j++)
+                {
+                    if (i != j)
+                    {
+                        fprintf (out, "%d %d : %d\n", i, j, res[i][j]);
+                        res[j][i] = -res[i][j];
+                    }
+                }
+                fprintf (out, "\n");
+            }
+        }
+
+        fprintf (out, "O Maior Fluxo Possivel: %d", fmax);
         fclose(out);
     }
 
-    else    cout << "O Maior Fluxo Possivel: " << FordFulkerson(Grafo, qVert, inicio, fim);;
+    else
+    {
+        if (crescente)
+        {
+            for (int i = 0; i < qVert; i++)
+            {
+                cout << "Vertice " << i << endl;
+                for (int j = 0; j < qVert; j++)
+                {
+                    if (i != j)
+                    {
+                        cout << i << " " << j << " : ";
+                        cout << res[i][j] << endl;
+
+                        res[j][i] = -res[i][j];
+                    }
+                }
+                cout << endl;
+            }
+        }
+        cout << "O Maior Fluxo Possivel: " << fmax;
+    }
 
     return 0;
 }
