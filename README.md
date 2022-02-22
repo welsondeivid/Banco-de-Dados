@@ -11,7 +11,7 @@ g++ nome_do_algoritmo.cpp -o nome_do_algoritmo
 
 Ex: g++ Prim.cpp -o Prim
 
-Para o arquivo de entrada digite -f nome_do_arquivo.extensão_do arquivo, ex: -f Prim.txt
+Para o arquivo de entrada digite -f nome_do_arquivo.extensão_do arquivo, ex: -f PrimEntrada.txt
 
 ## Dijkstra
 
