@@ -6,9 +6,9 @@ Para compilar digite make, para executar nome_do_algoritmo.exe -h (para saber qu
 
 # Dijkstra
 
-make
-Dijkstra.exe -h
-E vão aparecer os parâmetros permitidos
+make.
+Dijkstra.exe -h.
+E vão aparecer os parâmetros permitidos.
 
 # FordFulkerson
 
