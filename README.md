@@ -4,7 +4,6 @@ Algoritmos para a Disciplina Grafos
 Alunos:
 
 Welson Deivid dos Santos
-
 Jonathan Yuri
 
 Em cada pasta há 3 arquivos, algoritmo, arquivo de entrada e Makefile
