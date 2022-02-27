@@ -1,6 +1,12 @@
 # Teoria-dos-Grafos
 Algoritmos para a Disciplina Grafos
 
+Alunos:
+
+Welson Deivid dos Santos
+
+Jonathan Yuri
+
 Em cada pasta há 3 arquivos, algoritmo, arquivo de entrada e Makefile
 
 Para compilar digite make, para executar nome_do_algoritmo.exe -h (para saber quais parâmetros cada algoritmo possui)
